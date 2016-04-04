@@ -12,11 +12,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.jenzz.appstate.AppState;
+import com.jenzz.appstate.RxAppState;
+
 import io.fabric.sdk.android.Fabric;
+import rx.Subscription;
+import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private Analytics analytics;
+    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +53,33 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        analytics = new Analytics(Answers.getInstance());
+        analytics.applicationStart();
+
+        // Subscribe for application background and foreground actions.
+        subscription = RxAppState.monitor(getApplication())
+                .subscribe(new Action1<AppState>() {
+                    @Override
+                    public void call(AppState state) {
+                        switch (state) {
+                            case FOREGROUND:
+                                analytics.applicationEntersForeground();
+                                break;
+
+                            case BACKGROUND:
+                                analytics.applicationEntersBackground();
+                                break;
+                        }
+                    }
+                });
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Don't leak the Rx subscription for app background/foreground notifications.
+        subscription.unsubscribe();
+        super.onDestroy();
     }
 
     @Override

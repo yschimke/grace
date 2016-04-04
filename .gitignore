@@ -35,5 +35,8 @@ captures/
 *.iml
 .idea/
 
-# Non project files
+# Fabric properties file, not for public source
+fabric.properties
+
+# Platform-specific
 .DS_Store

@@ -21,7 +21,7 @@ public class JSON {
             result = new User();
             result.id = user.get("id").asLong();
             result.name = user.get("name").asText();
-            result.screenname = user.get("screen_name").asText();
+            result.screenName = user.get("screen_name").asText();
             result.description = user.get("description").asText();
             result.profileImageUrlHttps = user.get("profile_image_url_https").asText();
         }

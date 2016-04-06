@@ -1,5 +1,6 @@
 package com.twitter.tweetducker.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -14,10 +15,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.crashlytics.android.answers.Answers;
 import com.jenzz.appstate.AppState;
 import com.jenzz.appstate.RxAppState;
+import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.tweetducker.Analytics;
@@ -25,10 +29,13 @@ import com.twitter.tweetducker.R;
 import com.twitter.tweetducker.TwitterAPI;
 import com.twitter.tweetducker.model.CollectionsList;
 import com.twitter.tweetducker.model.Timeline;
+import com.twitter.tweetducker.model.User;
 import com.twitter.tweetducker.rx.ObserverAdapter;
 
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -109,8 +116,15 @@ public class MainActivity extends AppCompatActivity
             // Start listening to Twitter API responses on the UI thread to apply updates.
             TwitterAPI api = new TwitterAPI(session);
 
+            View header = navigationView.getHeaderView(0);
+            final TextView screenName = (TextView) header.findViewById(R.id.screen_name);
+            final TextView name = (TextView) header.findViewById(R.id.name);
+            final ImageView avatar = (ImageView) header.findViewById(R.id.avatar);
+
+            final Context context = getApplicationContext();
             collectionsListSubscription = api.getCollectionsListObservable()
-                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new ObserverAdapter<CollectionsList>() {
                         public void onNext(CollectionsList collectionsList) {
                             Log.d(TAG, collectionsList.user.toString());
@@ -118,7 +132,26 @@ public class MainActivity extends AppCompatActivity
                                 Log.d(TAG, timeline.toString());
                             }
 
-                            // TODO Update view here.
+                            User user = collectionsList.user;
+
+                            String screenNameText = "@" + user.screenName;
+                            if (user.screenName == null) {
+                                screenNameText = "";
+                            }
+
+                            String nameText = user.name;
+                            if (nameText == null) {
+                                nameText = "";
+                            }
+
+                            screenName.setText(screenNameText);
+                            name.setText(nameText);
+
+                            Picasso.with(context)
+                                    .load(user.getAvatarUrl())
+                                    .resizeDimen(R.dimen.avatar_width, R.dimen.avatar_height)
+                                    .transform(new RoundedCornersTransformation(10, 0))
+                                    .into(avatar);
                         }
                     });
 

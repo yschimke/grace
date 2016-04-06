@@ -61,6 +61,8 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
     compile 'com.tumblr:remember:1.0.0@aar'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'jp.wasabeef:picasso-transformations:2.1.0'
 
     testCompile 'junit:junit:4.12'
 }

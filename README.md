@@ -21,6 +21,8 @@ and should have the following format.
     twitter_key=<24 character base 64 string>
     twitter_secret=<50 character base 64 string>
 
+## Thanks
+The duck silhouette is from [Wikipedia](https://commons.wikimedia.org/wiki/File:Duck_vector.png).
 
 ## License
 

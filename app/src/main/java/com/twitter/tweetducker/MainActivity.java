@@ -1,5 +1,6 @@
 package com.twitter.tweetducker;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,8 @@ import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.jenzz.appstate.AppState;
 import com.jenzz.appstate.RxAppState;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterSession;
 
 import io.fabric.sdk.android.Fabric;
 import rx.Subscription;
@@ -31,7 +34,22 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
+
+        TweetDuckerApplication application = TweetDuckerApplication.getInstance();
+        Fabric.with(this, new Crashlytics(), new Twitter(application.getTwitterAuthConfig()));
+
+        // Check logged in
+        final TwitterSession session = Twitter.getInstance().core.getSessionManager().getActiveSession();
+        if (session == null) {
+            // Start the login activity
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+
+            // Finish this activity so the back button doesn't return here.
+            finish();
+        }
+
+        // Organise the UI.
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -54,8 +72,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        // Start analytics.
         analytics = new Analytics(Answers.getInstance());
-        analytics.applicationStart();
+        if (session != null) {
+            // Why can session be null here?
+            analytics.session(session);
+        }
 
         // Subscribe for application background and foreground actions.
         subscription = RxAppState.monitor(getApplication())
@@ -64,11 +86,11 @@ public class MainActivity extends AppCompatActivity
                     public void call(AppState state) {
                         switch (state) {
                             case FOREGROUND:
-                                analytics.applicationEntersForeground();
+                                analytics.foreground();
                                 break;
 
                             case BACKGROUND:
-                                analytics.applicationEntersBackground();
+                                analytics.background();
                                 break;
                         }
                     }

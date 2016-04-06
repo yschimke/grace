@@ -35,8 +35,9 @@ captures/
 *.iml
 .idea/
 
-# Fabric properties file, not for public source
+# Credentials and API secrets, not for public source
 fabric.properties
+app/src/main/assets/app.properties
 
 # Platform-specific
 .DS_Store

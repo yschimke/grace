@@ -13,8 +13,8 @@ apply plugin: 'io.fabric'
 repositories {
     maven { url 'https://maven.fabric.io/public' }
     maven { url "https://jitpack.io" }
+    jcenter()
 }
-
 
 android {
     compileSdkVersion 23
@@ -34,6 +34,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+    }
 }
 
 dependencies {
@@ -49,7 +54,13 @@ dependencies {
         transitive = true;
     }
 
+    compile 'io.reactivex:rxandroid:1.1.0'
+    compile 'io.reactivex:rxjava:1.1.2'
     compile 'com.github.jenzz:RxAppState:1.0.0'
+
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+    compile 'com.tumblr:remember:1.0.0@aar'
 
     testCompile 'junit:junit:4.12'
 }

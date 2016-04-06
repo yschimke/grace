@@ -1,4 +1,4 @@
-package com.twitter.tweetducker;
+package com.twitter.tweetducker.ui;
 
 import android.text.Spannable;
 import android.text.TextPaint;

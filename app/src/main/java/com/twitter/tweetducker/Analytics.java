@@ -15,18 +15,19 @@ public class Analytics {
         this.answers = answers;
     }
 
-    public void foreground() {
-        CustomEvent event = new CustomEvent("foreground");
-        answers.logCustom(event);
-    }
 
-    public void background() {
-        CustomEvent event = new CustomEvent("background");
-        answers.logCustom(event);
-    }
+    /*
+     * User login events.
+     */
 
     public void notLoggedIn() {
         CustomEvent event = new CustomEvent("notloggedin");
+        answers.logCustom(event);
+    }
+
+    public void loggedIn(@NonNull TwitterSession session) {
+        CustomEvent event = new CustomEvent("session")
+                .putCustomAttribute("userid", session.getUserId());
         answers.logCustom(event);
     }
 
@@ -42,9 +43,38 @@ public class Analytics {
         answers.logLogin(event);
     }
 
-    public void session(@NonNull TwitterSession session) {
-        CustomEvent event = new CustomEvent("session")
-                .putCustomAttribute("userid", session.getUserId());
+
+    /*
+     * Application events.
+     */
+
+    public void foreground() {
+        CustomEvent event = new CustomEvent("foreground");
+        answers.logCustom(event);
+    }
+
+    public void background() {
+        CustomEvent event = new CustomEvent("background");
+        answers.logCustom(event);
+    }
+
+
+    /*
+     * Twitter API events.
+     */
+
+    public void precachedCollectionsList() {
+        CustomEvent event = new CustomEvent("precachedcollections");
+        answers.logCustom(event);
+    }
+
+    public void refreshCollectionsList() {
+        CustomEvent event = new CustomEvent("refreshcollections");
+        answers.logCustom(event);
+    }
+
+    public void refreshedCollectionsList() {
+        CustomEvent event = new CustomEvent("refreshedcollection");
         answers.logCustom(event);
     }
 }

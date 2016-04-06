@@ -1,4 +1,4 @@
-package com.twitter.tweetducker;
+package com.twitter.tweetducker.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,12 +9,16 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.crashlytics.android.answers.Answers;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+import com.twitter.tweetducker.Analytics;
+import com.twitter.tweetducker.BuildConfig;
+import com.twitter.tweetducker.R;
 
 public class LoginActivity extends Activity {
 
@@ -23,7 +27,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Fabric is already available from MainActivity onCreate.
+        final Analytics analytics = new Analytics(Answers.getInstance());
 
         // Organise the UI
         setContentView(R.layout.activity_login);
@@ -45,16 +49,10 @@ public class LoginActivity extends Activity {
         String version = text + " " + BuildConfig.VERSION_NAME;
         view.setText(version);
 
-        // Start analytics.
-        final Analytics analytics = new Analytics(Answers.getInstance());
-        analytics.notLoggedIn();
-
         loginButton = (TwitterLoginButton) findViewById(R.id.twitter_login_button);
         loginButton.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                // The TwitterSession is also available through:
-                // Twitter.getInstance().core.getSessionManager().getActiveSession()
                 TwitterSession session = result.data;
 
                 String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
@@ -72,6 +70,8 @@ public class LoginActivity extends Activity {
 
             @Override
             public void failure(TwitterException exception) {
+                Crashlytics.logException(exception);
+
                 String msg = "Authentication Failure";
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
 
@@ -89,4 +89,3 @@ public class LoginActivity extends Activity {
         loginButton.onActivityResult(requestCode, resultCode, data);
     }
 }
-

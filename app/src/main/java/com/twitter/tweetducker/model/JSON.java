@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,6 +66,14 @@ public class JSON {
                     for (JsonNode timeline : timelines) {
                         tmp.add(parseTimeline(timeline));
                     }
+
+                    // Sort Timelines alphabetically by name for display.
+                    Collections.sort(tmp, new Comparator<Timeline>() {
+                        @Override
+                        public int compare(Timeline lhs, Timeline rhs) {
+                            return lhs.name.compareToIgnoreCase(rhs.name);
+                        }
+                    });
 
                     result.timelines = tmp;
                 }

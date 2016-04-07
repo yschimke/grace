@@ -54,10 +54,6 @@ public class LoginActivity extends Activity {
             @Override
             public void success(Result<TwitterSession> result) {
                 TwitterSession session = result.data;
-
-                String msg = "@" + session.getUserName() + " logged in! (#" + session.getUserId() + ")";
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-
                 analytics.login(session);
 
                 // Start the main activity

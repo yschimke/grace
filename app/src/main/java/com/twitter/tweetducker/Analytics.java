@@ -3,9 +3,11 @@ package com.twitter.tweetducker;
 import android.support.annotation.NonNull;
 
 import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
 import com.crashlytics.android.answers.CustomEvent;
 import com.crashlytics.android.answers.LoginEvent;
 import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.tweetducker.model.Timeline;
 
 public class Analytics {
 
@@ -41,6 +43,20 @@ public class Analytics {
     public void failedLogin() {
         LoginEvent event = new LoginEvent().putSuccess(false);
         answers.logLogin(event);
+    }
+
+
+    /*
+     * Content events
+     */
+
+    public void timelineImpression(@NonNull Timeline timeline) {
+        ContentViewEvent event = new ContentViewEvent()
+                .putContentName(timeline.name)
+                .putContentType("Collection")
+                .putContentId(timeline.getIdString());
+
+        answers.logContentView(event);
     }
 
 

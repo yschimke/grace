@@ -3,9 +3,9 @@ package com.twitter.tweetducker.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.crashlytics.android.answers.Answers;
@@ -24,6 +25,8 @@ import com.jenzz.appstate.RxAppState;
 import com.squareup.picasso.Picasso;
 import com.twitter.sdk.android.Twitter;
 import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.tweetui.CollectionTimeline;
+import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter;
 import com.twitter.tweetducker.Analytics;
 import com.twitter.tweetducker.R;
 import com.twitter.tweetducker.TwitterAPI;
@@ -31,6 +34,8 @@ import com.twitter.tweetducker.model.CollectionsList;
 import com.twitter.tweetducker.model.Timeline;
 import com.twitter.tweetducker.model.User;
 import com.twitter.tweetducker.rx.ObserverAdapter;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
 import rx.Subscription;
@@ -40,11 +45,11 @@ import rx.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-
     private Analytics analytics;
     private Subscription appStateSubscription;
     private Subscription collectionsListSubscription;
+    private final AtomicReference<CollectionsList> collectionsListReference = new AtomicReference<>();
+    private final AtomicReference<Timeline> currentTimeline = new AtomicReference<>();
 
     private void checkLoggedIn() {
         TwitterSession session = Twitter.getInstance().core.getSessionManager().getActiveSession();
@@ -59,6 +64,35 @@ public class MainActivity extends AppCompatActivity
             finish();
         } else {
             analytics.loggedIn(session);
+        }
+    }
+
+    private void setCollection(@NonNull Timeline timeline) {
+        if (timeline != null) {
+            Long id = timeline.getId();
+
+            if (id != null) {
+                // Set the toolbar title.
+                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                toolbar.setTitle(timeline.name);
+
+                // Set the timeline in the main content view.
+                ListView view = (ListView) findViewById(R.id.collection);
+
+                CollectionTimeline collection = new CollectionTimeline.Builder()
+                        .id(id)
+                        .build();
+
+                TweetTimelineListAdapter adapter = new TweetTimelineListAdapter.Builder(this)
+                        .setTimeline(collection)
+                        .setViewStyle(R.style.tw__TweetLightWithActionsStyle)
+                        .build();
+
+                view.setAdapter(adapter);
+
+                currentTimeline.set(timeline);
+                analytics.timelineImpression(timeline);
+            }
         }
     }
 
@@ -86,6 +120,9 @@ public class MainActivity extends AppCompatActivity
                             .setAction("Action", null).show();
                 }
             });
+
+            // Hide the floating action bar until it has a use.
+            fab.hide();
 
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -121,17 +158,15 @@ public class MainActivity extends AppCompatActivity
             final TextView name = (TextView) header.findViewById(R.id.name);
             final ImageView avatar = (ImageView) header.findViewById(R.id.avatar);
 
+            final Menu menu = navigationView.getMenu();
+
             final Context context = getApplicationContext();
             collectionsListSubscription = api.getCollectionsListObservable()
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new ObserverAdapter<CollectionsList>() {
                         public void onNext(CollectionsList collectionsList) {
-                            Log.d(TAG, collectionsList.user.toString());
-                            for (Timeline timeline : collectionsList.timelines) {
-                                Log.d(TAG, timeline.toString());
-                            }
-
+                            // Update the user details in the navigation drawer.
                             User user = collectionsList.user;
 
                             String screenNameText = "@" + user.screenName;
@@ -152,6 +187,20 @@ public class MainActivity extends AppCompatActivity
                                     .resizeDimen(R.dimen.avatar_width, R.dimen.avatar_height)
                                     .transform(new RoundedCornersTransformation(10, 0))
                                     .into(avatar);
+
+                            // Update the collections list in the navigation drawer.
+                            menu.clear();
+                            for (Timeline timeline : collectionsList.timelines) {
+                                menu.add(timeline.name);
+                            }
+
+                            // Keep the collections list for handling onNavigationItemSelected.
+                            collectionsListReference.set(collectionsList);
+
+                            // Display the first collection if none visible.
+                            if (currentTimeline.get() == null && !collectionsList.timelines.isEmpty()) {
+                                setCollection(collectionsList.timelines.get(0));
+                            }
                         }
                     });
 
@@ -208,25 +257,19 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        String title = item.getTitle().toString();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        CollectionsList collectionsList = collectionsListReference.get();
+        if (collectionsList != null) {
+            Timeline timeline = collectionsList.findTimelineByName(title);
+            if (timeline != null) {
+                setCollection(timeline);
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 }

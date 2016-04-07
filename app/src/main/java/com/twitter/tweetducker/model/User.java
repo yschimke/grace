@@ -8,6 +8,10 @@ public class User {
     public String profileImageUrlHttps;
 
     public String getAvatarUrl() {
+        if (profileImageUrlHttps == null) {
+            return null;
+        }
+
         // Be better than this... :(
         return profileImageUrlHttps.replace("_normal.", "_400x400.");
     }

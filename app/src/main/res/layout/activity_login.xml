@@ -70,7 +70,7 @@
             android:layout_marginBottom="4dp">
 
             <TextView
-                android:id="@+id/terms_text"
+                android:id="@+id/terms_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -83,7 +83,7 @@
                 android:textIsSelectable="false" />
 
             <TextView
-                android:id="@+id/privacy_text"
+                android:id="@+id/privacy_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
@@ -95,7 +95,7 @@
                 android:layout_marginRight="8dp"/>
 
             <TextView
-                android:id="@+id/version_text"
+                android:id="@+id/version_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"

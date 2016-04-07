@@ -83,9 +83,19 @@ class TwitterAPI(private val session: TwitterSession) {
                 val response = client.newCall(request).execute()
 
                 val body = response.body().string()
+                if (body == null) {
+                    analytics.failedCollectionsListFetch(session)
+                    Log.d(TAG, "Failed to fetch collections/list JSON.")
+                }
+
                 body?.let {
                     // Parse the JSON into a model object Collections and publish.
                     val collections = JSON.parseCollectionsList(body, session.userId)
+                    if (collections == null) {
+                        analytics.failedCollectionsListParse(session)
+                        Log.d(TAG, "Failed to parse collections/list JSON response.")
+                    }
+
                     collections?.let {
                         Log.d(TAG, "Refreshed collections/list.")
                         analytics.refreshedCollectionsList()

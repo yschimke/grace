@@ -80,4 +80,16 @@ class Analytics(private val answers: Answers) {
     fun refreshedCollectionsList() {
         answers.logCustom(CustomEvent("refreshedcollection"))
     }
+
+    fun failedCollectionsListParse(session: TwitterSession) {
+        val event = CustomEvent("failedcollectionparse")
+                .putCustomAttribute("userid", session.userId)
+        answers.logCustom(event)
+    }
+
+    fun failedCollectionsListFetch(session: TwitterSession) {
+        val event = CustomEvent("failedcollectionfetch")
+                .putCustomAttribute("userid", session.userId)
+        answers.logCustom(event)
+    }
 }

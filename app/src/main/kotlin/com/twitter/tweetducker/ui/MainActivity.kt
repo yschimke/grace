@@ -2,7 +2,6 @@ package com.twitter.tweetducker.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -11,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 
 import com.crashlytics.android.answers.Answers
+import com.jakewharton.rxbinding.support.design.widget.itemSelections
 import com.jenzz.appstate.AppState
 import com.jenzz.appstate.RxAppState
 import com.squareup.picasso.Picasso
@@ -31,13 +31,15 @@ import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity() {
 
     private var analytics: Analytics? = null
-    private var appStateSubscription: Subscription? = null
-    private var collectionsListSubscription: Subscription? = null
     private val collectionsListReference = AtomicReference<CollectionsList>()
     private val currentTimeline = AtomicReference<Timeline>()
+
+    private var appStateSubscription: Subscription? = null
+    private var collectionsListSubscription: Subscription? = null
+    private var navigationViewSubscription: Subscription? = null
 
     private fun checkLoggedIn() {
         val session = Twitter.getInstance().getSession()
@@ -89,6 +91,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val session = Twitter.getInstance().getSession()
         session?.let {
             // Why can the session be null here if checkLoggedIn finish()-ed?
+            val api = TwitterAPI(session)
 
             // Organise the UI.
             setContentView(R.layout.activity_main)
@@ -108,26 +111,41 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             drawer_layout.addDrawerListener(toggle)
             toggle.syncState()
 
-            navigation_view.setNavigationItemSelectedListener(this)
+            // Subscribe for navigation drawer menu item selections on the UI thread to apply updates.
+            navigationViewSubscription = navigation_view.itemSelections()
+                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .subscribe(object : ObserverAdapter<MenuItem>() {
+                        override fun onNext(item: MenuItem) {
+                            val collectionsList = collectionsListReference.get()
+                            collectionsList?.let {
+                                val title = item.title.toString()
+
+                                val timeline = collectionsList.findTimelineByName(title)
+                                timeline?.let {
+                                    setCollection(timeline)
+                                }
+                            }
+
+                            drawer_layout.closeDrawer(GravityCompat.START)
+                        }
+                    })
 
             // Subscribe for application background and foreground actions.
-            appStateSubscription = RxAppState.monitor(application).subscribe(object : ObserverAdapter<AppState>() {
-                override fun onNext(state: AppState) {
-                    when (state) {
-                        AppState.FOREGROUND -> analytics!!.foreground()
-                        AppState.BACKGROUND -> analytics!!.background()
-                    }
-                }
-            })
+            appStateSubscription = RxAppState.monitor(application)
+                    .subscribe(object : ObserverAdapter<AppState>() {
+                        override fun onNext(state: AppState) {
+                            when (state) {
+                                AppState.FOREGROUND -> analytics!!.foreground()
+                                AppState.BACKGROUND -> analytics!!.background()
+                            }
+                        }
+                    })
 
-            // Start listening to Twitter API responses on the UI thread to apply updates.
-            val api = TwitterAPI(session)
-
+            // Subscribe for Twitter API responses on the UI thread to apply updates.
             collectionsListSubscription = api.getCollectionsListObservable()
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : ObserverAdapter<CollectionsList>() {
-
                         override fun onNext(collectionsList: CollectionsList) {
                             // Update the user details in the navigation drawer.
                             val user = collectionsList.user
@@ -166,12 +184,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDestroy() {
         // Don't leak the Rx subscriptions.
-        appStateSubscription?.let {
-            appStateSubscription!!.unsubscribe()
-        }
-        collectionsListSubscription?.let  {
-            collectionsListSubscription!!.unsubscribe()
-        }
+        appStateSubscription?.unsubscribe()
+        collectionsListSubscription?.unsubscribe()
+        navigationViewSubscription?.unsubscribe()
 
         super.onDestroy()
     }
@@ -201,21 +216,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val title = item.title.toString()
-
-        val collectionsList = collectionsListReference.get()
-        collectionsList?.let {
-            val timeline = collectionsList.findTimelineByName(title)
-            timeline?.let {
-                setCollection(timeline)
-            }
-        }
-
-        drawer_layout.closeDrawer(GravityCompat.START)
-
-        return true
     }
 }

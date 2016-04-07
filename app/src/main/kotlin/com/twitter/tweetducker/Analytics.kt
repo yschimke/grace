@@ -8,7 +8,6 @@ import com.twitter.sdk.android.core.TwitterSession
 
 class Analytics(private val answers: Answers) {
 
-
     /*
      * User login events.
      */
@@ -47,7 +46,7 @@ class Analytics(private val answers: Answers) {
                 ContentViewEvent()
                         .putContentName(timeline.name)
                         .putContentType("Collection")
-                        .putContentId(timeline.idString)
+                        .putContentId("${timeline.id}")
         )
     }
 

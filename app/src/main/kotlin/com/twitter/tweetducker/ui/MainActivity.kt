@@ -2,8 +2,8 @@ package com.twitter.tweetducker.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val id = timeline.id
         id?.let {
             // Set the toolbar title.
-            toolbar.setTitle(timeline.name)
+            toolbar.title = timeline.name
 
             // Set the timeline in the main content view.
             val collection = CollectionTimeline.Builder()
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .setViewStyle(R.style.tw__TweetLightWithActionsStyle)
                     .build()
 
-            collection_list_view.setAdapter(adapter)
+            collection_list_view.adapter = adapter
 
             currentTimeline.set(timeline)
             analytics!!.timelineImpression(timeline)
@@ -94,11 +94,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             setContentView(R.layout.activity_main)
             setSupportActionBar(toolbar)
 
-            floating_action_button.setOnClickListener({ view ->
+            floating_action_button.setOnClickListener { view ->
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null)
                         .show()
-            })
+            }
 
             // Hide the floating action bar until it has a use.
             floating_action_button.hide()
@@ -123,9 +123,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             // Start listening to Twitter API responses on the UI thread to apply updates.
             val api = TwitterAPI(session)
 
-            val menu = navigation_view.getMenu()
-
-            val context = applicationContext
             collectionsListSubscription = api.getCollectionsListObservable()
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -138,13 +135,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             screen_name_text_view.text = "@${user.screenName}"
                             name_text_view.text = user.name
 
-                            Picasso.with(context)
+                            Picasso.with(applicationContext)
                                     .load(user.avatarUrl)
                                     .resizeDimen(R.dimen.avatar_width, R.dimen.avatar_height)
                                     .transform(RoundedCornersTransformation(10, 0))
                                     .into(avatar_image_view)
 
                             // Update the collections list in the navigation drawer.
+                            val menu = navigation_view.getMenu()
+
                             menu.clear()
                             for (timeline in collectionsList.timelines) {
                                 menu.add(timeline.name)
@@ -197,7 +196,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true
         }
@@ -205,7 +203,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return super.onOptionsItemSelected(item)
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         val title = item.title.toString()
 

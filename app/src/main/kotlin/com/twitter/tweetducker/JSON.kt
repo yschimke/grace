@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 
 import java.io.IOException
-import java.util.LinkedList
+
 import kotlin.comparisons.compareBy
 
 object JSON {
@@ -29,25 +29,24 @@ object JSON {
             timeline.get("visibility").asText()
     )
 
-
     fun parseCollectionsList(json: String, userId: Long): CollectionsList? {
         try {
             val mapper = ObjectMapper()
             val root = mapper.readValue(json, JsonNode::class.java)
 
             root?.let {
-                val userJson = root.path("objects").path("users").path("" + userId)
+                val userJson = root.path("objects").path("users").path("${userId}")
                 val timelinesJson = root.path("objects").path("timelines")
 
                 if (!userJson.isMissingNode && !timelinesJson.isMissingNode) {
                     val user = parseUser(userJson)
 
-                    val timelines = LinkedList<Timeline>()
+                    val timelines = mutableListOf<Timeline>()
                     for (timeline in timelinesJson) {
                         timelines.add(parseTimeline(timeline))
                     }
 
-                    val sortedTimelines = timelines.sortedWith(compareBy({ it.name }))
+                    val sortedTimelines = timelines.sortedWith(compareBy { it.name.toLowerCase() })
 
                     return CollectionsList(user, sortedTimelines)
                 }

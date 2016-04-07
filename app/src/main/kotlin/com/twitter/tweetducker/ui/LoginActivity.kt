@@ -17,6 +17,7 @@ import com.twitter.sdk.android.core.TwitterSession
 import com.twitter.tweetducker.Analytics
 import com.twitter.tweetducker.BuildConfig
 import com.twitter.tweetducker.R
+import com.twitter.tweetducker.removeLinkUnderline
 
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -32,12 +33,12 @@ class LoginActivity : Activity() {
         val termsHtml = applicationContext.getString(R.string.terms_html)
         terms_text_view.text = Html.fromHtml(termsHtml)
         terms_text_view.movementMethod = LinkMovementMethod.getInstance()
-        RemoveLinkUnderline.remove(terms_text_view)
+        terms_text_view.removeLinkUnderline()
 
         val privacyHtml = applicationContext.getString(R.string.privacy_html)
         privacy_text_view.text = Html.fromHtml(privacyHtml)
         privacy_text_view.movementMethod = LinkMovementMethod.getInstance()
-        RemoveLinkUnderline.remove(privacy_text_view)
+        privacy_text_view.removeLinkUnderline()
 
         val versionText = applicationContext.getString(R.string.version_text)
         version_text_view.text = "${versionText} ${BuildConfig.VERSION_NAME}"
@@ -47,7 +48,7 @@ class LoginActivity : Activity() {
                 val session = result.data
                 analytics.login(session)
 
-                // Start the main activity
+                // Start the main activity.
                 val intent = Intent(applicationContext, MainActivity::class.java)
                 startActivity(intent)
 

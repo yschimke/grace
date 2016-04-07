@@ -17,7 +17,7 @@
         android:layout_width="@dimen/avatar_width"
         android:layout_height="@dimen/avatar_height"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        tools:src="@drawable/ic_tweetducker" />
+        tools:src="@android:drawable/ic_menu_gallery" />
 
     <TextView
         android:id="@+id/screen_name"

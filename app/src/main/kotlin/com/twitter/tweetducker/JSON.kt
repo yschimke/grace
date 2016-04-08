@@ -1,7 +1,5 @@
 package com.twitter.tweetducker
 
-import android.util.Log
-
 import com.crashlytics.android.Crashlytics
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -11,8 +9,6 @@ import java.io.IOException
 import kotlin.comparisons.compareBy
 
 object JSON {
-
-    private val TAG = JSON::class.asTag()
 
     private fun parseUser(user: JsonNode): User = User(
             user.get("id").asLong(),
@@ -53,7 +49,6 @@ object JSON {
             }
         } catch (ioe: IOException) {
             Crashlytics.logException(ioe)
-            Log.d(TAG, "IOException parsing JSON.", ioe)
         }
 
         return null

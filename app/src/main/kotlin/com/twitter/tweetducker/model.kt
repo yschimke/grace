@@ -7,6 +7,12 @@ data class CollectionsList(val user: User, val timelines: List<Timeline>) {
             timeline.name.equals(name, ignoreCase = true)
         }
     }
+
+    fun findTimelineByCollectionUrl(collectionUrl: String): Timeline? {
+        return timelines.find { timeline ->
+            timeline.collectionUrl.equals(collectionUrl, ignoreCase = true)
+        }
+    }
 }
 
 

@@ -2,18 +2,22 @@ package com.twitter.tweetducker.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.TextView
 
 import com.crashlytics.android.answers.Answers
 import com.jakewharton.rxbinding.support.design.widget.itemSelections
 import com.jenzz.appstate.AppState
 import com.jenzz.appstate.RxAppState
 import com.squareup.picasso.Picasso
+import com.tumblr.remember.Remember
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.tweetui.CollectionTimeline
 import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter
@@ -26,7 +30,6 @@ import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.nav_header_main.*
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -35,7 +38,6 @@ class MainActivity : AppCompatActivity() {
 
     private var analytics: Analytics? = null
     private val collectionsListReference = AtomicReference<CollectionsList>()
-    private val currentTimeline = AtomicReference<Timeline>()
 
     private var appStateSubscription: Subscription? = null
     private var collectionsListSubscription: Subscription? = null
@@ -60,25 +62,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setCollection(timeline: Timeline) {
-        val id = timeline.id
-        id?.let {
-            // Set the toolbar title.
-            toolbar.title = timeline.name
+        // Don't set a collection if it is already being shown.
+        if (collection_list_view.tag != timeline.collectionUrl) {
+            val id = timeline.id
+            id?.let {
+                // Set the toolbar title.
+                toolbar.title = timeline.name
 
-            // Set the timeline in the main content view.
-            val collection = CollectionTimeline.Builder()
-                    .id(id)
-                    .build()
+                // Set the timeline in the main content view.
+                val collection = CollectionTimeline.Builder()
+                        .id(id)
+                        .build()
 
-            val adapter = TweetTimelineListAdapter.Builder(this)
-                    .setTimeline(collection)
-                    .setViewStyle(R.style.tw__TweetLightWithActionsStyle)
-                    .build()
+                val adapter = TweetTimelineListAdapter.Builder(this)
+                        .setTimeline(collection)
+                        .setViewStyle(R.style.tw__TweetLightWithActionsStyle)
+                        .build()
 
-            collection_list_view.adapter = adapter
+                collection_list_view.adapter = adapter
 
-            currentTimeline.set(timeline)
-            analytics!!.timelineImpression(timeline)
+                Remember.putString("selected-timeline", timeline.collectionUrl)
+
+                // Tag the collection_list_view so we can determine if it is still showing
+                // the collection we want after app running state changes, etc.
+                collection_list_view.tag = timeline.collectionUrl
+
+                analytics!!.timelineImpression(timeline)
+            }
         }
     }
 
@@ -90,8 +100,7 @@ class MainActivity : AppCompatActivity() {
 
         val session = Twitter.getInstance().getSession()
         session?.let {
-            // Why can the session be null here if checkLoggedIn finish()-ed?
-            val api = TwitterAPI(session)
+            // Why could the session have been null if checkLoggedIn finish()-ed?
 
             // Organise the UI.
             setContentView(R.layout.activity_main)
@@ -113,7 +122,7 @@ class MainActivity : AppCompatActivity() {
 
             // Subscribe for navigation drawer menu item selections on the UI thread to apply updates.
             navigationViewSubscription = navigation_view.itemSelections()
-                    .subscribeOn(AndroidSchedulers.mainThread())
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : ObserverAdapter<MenuItem>() {
                         override fun onNext(item: MenuItem) {
                             val collectionsList = collectionsListReference.get()
@@ -132,6 +141,7 @@ class MainActivity : AppCompatActivity() {
 
             // Subscribe for application background and foreground actions.
             appStateSubscription = RxAppState.monitor(application)
+                    .observeOn(Schedulers.io())
                     .subscribe(object : ObserverAdapter<AppState>() {
                         override fun onNext(state: AppState) {
                             when (state) {
@@ -141,26 +151,35 @@ class MainActivity : AppCompatActivity() {
                         }
                     })
 
+            // The Kotlin Android Extension synthetic views (navigation_view, screen_name_text_view,
+            // name_text_view, avatar_image_view) are null after changes to the app running state.
+            // e.g. swipe it out of the recent apps list and restart. Also displays some problems on
+            // rotation. Use findViewById for now.
+            val navigationView = findViewById(R.id.navigation_view) as NavigationView
+            val header = navigationView.getHeaderView(0)
+            val screenNameTextView = header.findViewById(R.id.screen_name_text_view) as TextView
+            val nameTextView = header.findViewById(R.id.name_text_view) as TextView
+            val avatarImageView = header.findViewById(R.id.avatar_image_view) as ImageView
+
             // Subscribe for Twitter API responses on the UI thread to apply updates.
-            collectionsListSubscription = api.getCollectionsListObservable()
-                    .subscribeOn(Schedulers.newThread())
+            collectionsListSubscription = TwitterAPI.getCollectionsListObservable()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : ObserverAdapter<CollectionsList>() {
                         override fun onNext(collectionsList: CollectionsList) {
                             // Update the user details in the navigation drawer.
                             val user = collectionsList.user
 
-                            screen_name_text_view.text = "@${user.screenName}"
-                            name_text_view.text = user.name
+                            screenNameTextView.text = "@${user.screenName}"
+                            nameTextView.text = user.name
 
                             Picasso.with(applicationContext)
                                     .load(user.avatarUrl)
                                     .resizeDimen(R.dimen.avatar_width, R.dimen.avatar_height)
                                     .transform(RoundedCornersTransformation(10, 0))
-                                    .into(avatar_image_view)
+                                    .into(avatarImageView)
 
                             // Update the collections list in the navigation drawer.
-                            val menu = navigation_view.getMenu()
+                            val menu = navigationView.getMenu()
 
                             menu.clear()
                             for (timeline in collectionsList.timelines) {
@@ -170,23 +189,31 @@ class MainActivity : AppCompatActivity() {
                             // Keep the collections list for handling onNavigationItemSelected.
                             collectionsListReference.set(collectionsList)
 
-                            // Display the first collection if none visible.
-                            if (currentTimeline.get() == null && !collectionsList.timelines.isEmpty()) {
-                                setCollection(collectionsList.timelines[0])
+                            // Must display a collection if at least one is available.
+                            if (!collectionsList.timelines.isEmpty()) {
+                                // Get selected collection or fallback to first collection in list.
+                                val firstCollectionUrl = collectionsList.timelines[0].collectionUrl
+                                val selectedCollectionUrl = Remember.getString("selected-timeline", firstCollectionUrl)
+
+                                val currentTimeline = collectionsList.findTimelineByCollectionUrl(selectedCollectionUrl)
+                                currentTimeline?.let {
+                                    setCollection(currentTimeline)
+                                }
                             }
                         }
                     })
 
-            // Trigger API data fetch to provide or update cached data.
-            api.refreshCollectionsList()
+            // Trigger API data fetch to provide updated Collections data.
+            TwitterAPI.fetchCachedCollectionsList(session)
+            TwitterAPI.refreshCollectionsList(session)
         }
     }
 
     override fun onDestroy() {
         // Don't leak the Rx subscriptions.
+        navigationViewSubscription?.unsubscribe()
         appStateSubscription?.unsubscribe()
         collectionsListSubscription?.unsubscribe()
-        navigationViewSubscription?.unsubscribe()
 
         super.onDestroy()
     }

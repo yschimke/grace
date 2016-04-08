@@ -15,25 +15,30 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import rx.Observable
 import rx.schedulers.Schedulers
-import rx.subjects.BehaviorSubject
+import rx.subjects.PublishSubject
 
-class TwitterAPI(private val session: TwitterSession) {
+object TwitterAPI {
 
-    companion object {
-        private val TAG = TwitterAPI::class.asTag()
-    }
+    private val TAG = TwitterAPI::class.asTag()
 
     private val analytics: Analytics
     private val twitterAuthConfig: TwitterAuthConfig
     private val client: OkHttpClient
-    private val collectionsListObservable: BehaviorSubject<CollectionsList>
+    private val collectionsListObservable: PublishSubject<CollectionsList>
 
     init {
         this.analytics = Analytics(Answers.getInstance())
         this.twitterAuthConfig = TweetDuckerApplication.instance!!.twitterAuthConfig
         this.client = OkHttpClient()
-        this.collectionsListObservable = BehaviorSubject.create<CollectionsList>()
+        this.collectionsListObservable = PublishSubject.create<CollectionsList>()
+    }
 
+    fun getCollectionsListObservable(): Observable<CollectionsList> {
+        // Note, exposed as an Observable interface, not as BehaviourSubject.
+        return collectionsListObservable
+    }
+
+    fun fetchCachedCollectionsList(session: TwitterSession) {
         // Read latest CollectionsList from cache and onNext to subscribers to preload.
         val url = "https://api.twitter.com/1.1/collections/list.json?user_id=${session.userId}"
 
@@ -50,12 +55,7 @@ class TwitterAPI(private val session: TwitterSession) {
         }
     }
 
-    fun getCollectionsListObservable(): Observable<CollectionsList> {
-        // Note, exposed as an Observable interface, not as BehaviourSubject.
-        return collectionsListObservable
-    }
-
-    private fun buildGetRequestWithAuthHeaders(url: String): Request {
+    private fun buildGetRequestWithAuthHeaders(url: String, session: TwitterSession): Request {
         val body = emptyMap<String, String>()
 
         var builder: Request.Builder = Request.Builder().get().url(url)
@@ -69,17 +69,16 @@ class TwitterAPI(private val session: TwitterSession) {
         return builder.build()
     }
 
-    fun refreshCollectionsList() {
+    fun refreshCollectionsList(session: TwitterSession) {
         // Make the network call in a deferred Observable so we can observe/subscribe
         // to it on an IO thread instead of on the Android UI thread.
         val task = Observable.defer {
-            Log.d(TAG, "Refreshing collections/list.")
             analytics.refreshCollectionsList()
 
             val url = "https://api.twitter.com/1.1/collections/list.json?user_id=${session.userId}"
 
             try {
-                val request = buildGetRequestWithAuthHeaders(url)
+                val request = buildGetRequestWithAuthHeaders(url, session)
                 val response = client.newCall(request).execute()
 
                 val body = response.body().string()
@@ -97,9 +96,7 @@ class TwitterAPI(private val session: TwitterSession) {
                     }
 
                     collections?.let {
-                        Log.d(TAG, "Refreshed collections/list.")
                         analytics.refreshedCollectionsList()
-
                         collectionsListObservable.onNext(collections)
 
                         // Now cache the result in storage.
@@ -108,7 +105,6 @@ class TwitterAPI(private val session: TwitterSession) {
                 }
             } catch (ioe: IOException) {
                 Crashlytics.logException(ioe)
-                Log.d(TAG, "IOException in OkHttp call", ioe)
             }
 
             Observable.empty<String>()

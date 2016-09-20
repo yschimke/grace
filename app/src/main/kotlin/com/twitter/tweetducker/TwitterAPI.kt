@@ -5,6 +5,7 @@ import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
 import com.tumblr.remember.Remember
+import com.twitter.sdk.android.core.OAuthSigning
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import com.twitter.sdk.android.core.TwitterSession
 import com.twitter.tweetducker.rx.ObserverAdapter
@@ -61,10 +62,8 @@ object TwitterAPI {
         var builder: Request.Builder = Request.Builder().get().url(url)
 
         // Add authentication header(s).
-        val headers = session.authToken.getAuthHeaders(twitterAuthConfig, "GET", url, body)
-        for (header in headers.entries) {
-            builder.addHeader(header.key, header.value)
-        }
+        val signer = OAuthSigning(twitterAuthConfig, session.authToken)
+        builder.addHeader("Authorization", signer.getAuthorizationHeader("GET", url, body))
 
         return builder.build()
     }

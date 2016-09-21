@@ -23,7 +23,7 @@ data class User(val id: Long, val name: String, val screenName: String, val desc
 }
 
 
-data class Timeline(val name: String, val description: String, val collectionUrl: String, val visibility: String) {
+data class Timeline(val name: String, val description: String?, val collectionUrl: String, val visibility: String) {
 
     val id: Long?
         get() {

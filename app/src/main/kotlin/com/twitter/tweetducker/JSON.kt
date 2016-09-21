@@ -20,7 +20,7 @@ object JSON {
 
     private fun parseTimeline(timeline: JsonNode): Timeline = Timeline(
             timeline.get("name").asText(),
-            timeline.get("description").asText(),
+            timeline.get("description")?.asText(), // Not all Collections have descriptions.
             timeline.get("collection_url").asText(),
             timeline.get("visibility").asText()
     )

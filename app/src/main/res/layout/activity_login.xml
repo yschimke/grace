@@ -60,51 +60,7 @@
             android:id="@+id/twitter_login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="80dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:layout_marginBottom="4dp">
-
-            <TextView
-                android:id="@+id/terms_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/terms_text"
-                android:textColor="@color/lightgrey"
-                android:textColorLink="@color/lightgrey"
-                android:textSize="12sp"
-                android:layout_gravity="start"
-                android:layout_marginRight="8dp"
-                android:textIsSelectable="false" />
-
-            <TextView
-                android:id="@+id/privacy_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/privacy_text"
-                android:textColor="@color/lightgrey"
-                android:textColorLink="@color/lightgrey"
-                android:textSize="12sp"
-                android:layout_gravity="start"
-                android:layout_marginRight="8dp"/>
-
-            <TextView
-                android:id="@+id/version_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="@string/version_text"
-                android:textColor="@color/lightgrey"
-                android:textSize="12sp"
-                android:layout_gravity="start" />
-        </LinearLayout>
-
+            android:layout_marginBottom="64dp" />
     </LinearLayout>
 </FrameLayout>
 

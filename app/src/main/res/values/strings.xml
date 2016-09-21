@@ -4,14 +4,6 @@
     <string name="login_info_title">Collect like a pro.</string>
     <string name="login_info_text">The most powerful mobile Twitter tool for managing your collections.</string>
 
-    <string name="terms_text">Terms of Service</string>
-    <string name="terms_html">&lt;a href="https://www.twitter.com/tos"&gt;Terms of Service&lt;/a&gt;</string>
-
-    <string name="privacy_text">Privacy Policy</string>
-    <string name="privacy_html">&lt;a href="https://twitter.com/privacy"&gt;Privacy Policy&lt;/a&gt;</string>
-
-    <string name="version_text">Version</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 

@@ -1,4 +1,4 @@
-package com.twitter.tweetducker
+package dog.woofwoofinc.grace
 
 import com.crashlytics.android.Crashlytics
 import com.fasterxml.jackson.databind.JsonNode

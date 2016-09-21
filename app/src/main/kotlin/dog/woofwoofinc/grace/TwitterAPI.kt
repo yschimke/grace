@@ -1,4 +1,4 @@
-package com.twitter.tweetducker
+package dog.woofwoofinc.grace
 
 import android.util.Log
 
@@ -8,7 +8,7 @@ import com.tumblr.remember.Remember
 import com.twitter.sdk.android.core.OAuthSigning
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import com.twitter.sdk.android.core.TwitterSession
-import com.twitter.tweetducker.rx.ObserverAdapter
+import dog.woofwoofinc.grace.rx.ObserverAdapter
 
 import java.io.IOException
 
@@ -29,7 +29,7 @@ object TwitterAPI {
 
     init {
         this.analytics = Analytics(Answers.getInstance())
-        this.twitterAuthConfig = TweetDuckerApplication.instance!!.twitterAuthConfig
+        this.twitterAuthConfig = GraceApplication.instance!!.twitterAuthConfig
         this.client = OkHttpClient()
         this.collectionsListObservable = PublishSubject.create<CollectionsList>()
     }

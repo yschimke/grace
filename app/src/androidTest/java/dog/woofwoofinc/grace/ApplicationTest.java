@@ -1,4 +1,4 @@
-package com.twitter.tweetducker;
+package dog.woofwoofinc.grace;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

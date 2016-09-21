@@ -1,4 +1,4 @@
-package com.twitter.tweetducker
+package dog.woofwoofinc.grace
 
 data class CollectionsList(val user: User, val timelines: List<Timeline>) {
 

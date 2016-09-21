@@ -1,4 +1,4 @@
-package com.twitter.tweetducker.ui
+package dog.woofwoofinc.grace.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -14,10 +14,10 @@ import com.twitter.sdk.android.core.Callback
 import com.twitter.sdk.android.core.Result
 import com.twitter.sdk.android.core.TwitterException
 import com.twitter.sdk.android.core.TwitterSession
-import com.twitter.tweetducker.Analytics
-import com.twitter.tweetducker.BuildConfig
-import com.twitter.tweetducker.R
-import com.twitter.tweetducker.removeLinkUnderline
+import dog.woofwoofinc.grace.Analytics
+import dog.woofwoofinc.grace.BuildConfig
+import dog.woofwoofinc.grace.R
+import dog.woofwoofinc.grace.removeLinkUnderline
 
 import kotlinx.android.synthetic.main.activity_login.*
 

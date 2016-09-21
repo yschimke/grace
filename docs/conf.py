@@ -6,8 +6,8 @@ project = u'Grace'
 copyright = u'2016, Woof Woof, Inc.'
 author = u'Woof Woof, Inc.'
 
-version = '1.0.3'
-release = '1.0.3'
+version = '1.0.0'
+release = '1.0.0'
 
 templates_path = ['_templates']
 exclude_patterns = ['_build']

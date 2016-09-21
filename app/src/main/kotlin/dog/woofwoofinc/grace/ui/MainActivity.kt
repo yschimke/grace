@@ -1,4 +1,4 @@
-package com.twitter.tweetducker.ui
+package dog.woofwoofinc.grace.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -21,8 +21,8 @@ import com.tumblr.remember.Remember
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.tweetui.CollectionTimeline
 import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter
-import com.twitter.tweetducker.*
-import com.twitter.tweetducker.rx.ObserverAdapter
+import dog.woofwoofinc.grace.*
+import dog.woofwoofinc.grace.rx.ObserverAdapter
 
 import java.util.concurrent.atomic.AtomicReference
 

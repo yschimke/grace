@@ -1,4 +1,4 @@
-package com.twitter.tweetducker
+package dog.woofwoofinc.grace
 
 import android.app.Application
 import android.util.Log
@@ -10,12 +10,12 @@ import com.twitter.sdk.android.core.TwitterAuthConfig
 
 import io.fabric.sdk.android.Fabric
 
-class TweetDuckerApplication : Application() {
+class GraceApplication : Application() {
 
     companion object {
-        val TAG = TweetDuckerApplication::class.asTag()
+        val TAG = GraceApplication::class.asTag()
 
-        var instance: TweetDuckerApplication? = null
+        var instance: GraceApplication? = null
             private set
     }
 
@@ -24,7 +24,7 @@ class TweetDuckerApplication : Application() {
         instance = this
 
         Fabric.with(this, Crashlytics(), Twitter(twitterAuthConfig))
-        Remember.init(applicationContext, "com.twitter.tweetducker")
+        Remember.init(applicationContext, "dog.woofwoofinc.grace")
     }
 
     val twitterAuthConfig: TwitterAuthConfig

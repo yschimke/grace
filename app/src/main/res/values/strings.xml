@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TweetDucker</string>
+    <string name="app_name">Grace</string>
 
     <string name="login_info_title">Collect like a pro.</string>
     <string name="login_info_text">The most powerful mobile Twitter tool for managing your collections.</string>

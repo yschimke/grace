@@ -20,10 +20,10 @@
         android:paddingTop="@dimen/activity_vertical_margin">
 
         <ImageView
-            android:id="@+id/tweetducker_logo"
+            android:id="@+id/grace_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/tweetducker_logo"
+            android:src="@drawable/grace_logo"
             android:layout_marginTop="16dp"
             android:layout_gravity="start"
             android:layout_marginBottom="64dp" />

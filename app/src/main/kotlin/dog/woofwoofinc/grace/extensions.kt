@@ -1,4 +1,4 @@
-package com.twitter.tweetducker
+package dog.woofwoofinc.grace
 
 import android.text.Spannable
 import android.text.TextPaint

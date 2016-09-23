@@ -1,0 +1,24 @@
+sudo: false
+
+language: android
+jdk:
+- oraclejdk8
+android:
+  components:
+  - tools
+  - platform-tools
+  - build-tools-24.0.2
+  - android-24
+  - extra-android-m2repository
+  - sys-img-armeabi-v7a-android-24
+
+# Emulator Management: Create, Start and Wait
+before_script:
+- echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
+- emulator -avd test -no-audio -no-window &
+- android-wait-for-emulator
+- adb shell input keyevent 82 &
+
+notifications:
+  slack:
+    secure: X6n/x5Z2rg9mens/nN9uUkUd/9jmZ8zLksLLWiPbi48eETcwGygRW7t1j5Gwew/mwwlXKWJ2XAYQfF25M96muIBrsr1nnxGeoPhpiBraVN8ldQfC84D4P+5H2ahBd9fstnjpTd/24525W0Bl7+i9JEpSXph7oUFsgexqUbFJFNwu/wEeAenSudiPsKemuWD87s9Y3FY3luKIssHbKL2ZGBiHektk6ZYBkkg0dlQ7TQogFwrFgexDicjsUjhwjgKdu3XRYTVxLD8i2jhyxOu947x5G4qgsP0sCqQsTFaoOd8Nuiqm9T8naALbkvcYr4E9PosdOp1rNTV03IE2eL5yZbl1C55UDVo4QqA7TFiqhtLh3/CEdu7HHqEHRH+jrsXQmZFiM9jAKNqBokMeLlT67VrjcRr8KEN2xSFOn77U2AzAh0EC2e5DpEC0cCtIghwMRx0R4VwmWxwpoi8qXQHSO+TRuCJKrWsXwdQBDK56ZPIIFR3dRrrbbZVX5HSAEIXI6Np8aokZfJ88BKFntWqiqhlarHkNPU0qLwE3MAGUIEMP754rea2xi/QTiRPEvGqCaBemtaaw5bQNWk3DcPOBwHuOMJRufdqeEKaOxUaXS+pdXpZaagKKMBwEkm9EK6lUmGyJ8nxzm43DvjrvK4pKPqfMA2Mh48QS1BoHGSghcBw=

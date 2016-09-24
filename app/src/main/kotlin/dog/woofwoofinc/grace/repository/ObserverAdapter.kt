@@ -1,4 +1,4 @@
-package dog.woofwoofinc.grace.rx
+package dog.woofwoofinc.grace.repository
 
 import rx.Observer
 

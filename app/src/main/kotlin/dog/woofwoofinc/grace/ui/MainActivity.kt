@@ -21,8 +21,10 @@ import com.tumblr.remember.Remember
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.tweetui.CollectionTimeline
 import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter
+
 import dog.woofwoofinc.grace.*
-import dog.woofwoofinc.grace.rx.ObserverAdapter
+import dog.woofwoofinc.grace.repository.ObserverAdapter
+import dog.woofwoofinc.grace.repository.Repository
 
 import java.util.concurrent.atomic.AtomicReference
 
@@ -162,7 +164,7 @@ class MainActivity : AppCompatActivity() {
             val avatarImageView = header.findViewById(R.id.avatar_image_view) as ImageView
 
             // Subscribe for Twitter API responses on the UI thread to apply updates.
-            collectionsListSubscription = TwitterAPI.getCollectionsListObservable()
+            collectionsListSubscription = Repository.getCollectionsListObservable()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(object : ObserverAdapter<CollectionsList>() {
                         override fun onNext(collectionsList: CollectionsList) {
@@ -204,8 +206,8 @@ class MainActivity : AppCompatActivity() {
                     })
 
             // Trigger API data fetch to provide updated Collections data.
-            TwitterAPI.fetchCachedCollectionsList(session)
-            TwitterAPI.refreshCollectionsList(session)
+            Repository.requestCachedCollectionsList(session)
+            Repository.requestCollectionsList(session)
         }
     }
 

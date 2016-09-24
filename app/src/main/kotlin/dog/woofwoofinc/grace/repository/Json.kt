@@ -1,28 +1,40 @@
-package dog.woofwoofinc.grace
+package dog.woofwoofinc.grace.repository
 
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.answers.Answers
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+
+import dog.woofwoofinc.grace.Analytics
+import dog.woofwoofinc.grace.CollectionsList
+import dog.woofwoofinc.grace.Timeline
+import dog.woofwoofinc.grace.User
 
 import java.io.IOException
 
 import kotlin.comparisons.compareBy
 
-object JSON {
+object Json {
+
+    private val analytics: Analytics
+
+    init {
+        this.analytics = Analytics(Answers.getInstance())
+    }
 
     private fun parseUser(user: JsonNode): User = User(
-            user.get("id").asLong(),
-            user.get("name").asText(),
-            user.get("screen_name").asText(),
-            user.get("description").asText(),
-            user.get("profile_image_url_https").asText()
+        user.get("id").asLong(),
+        user.get("name").asText(),
+        user.get("screen_name").asText(),
+        user.get("description").asText(),
+        user.get("profile_image_url_https").asText()
     )
 
     private fun parseTimeline(timeline: JsonNode): Timeline = Timeline(
-            timeline.get("name").asText(),
-            timeline.get("description")?.asText(), // Not all Collections have descriptions.
-            timeline.get("collection_url").asText(),
-            timeline.get("visibility").asText()
+        timeline.get("name").asText(),
+        timeline.get("description")?.asText(), // Not all Collections have descriptions.
+        timeline.get("collection_url").asText(),
+        timeline.get("visibility").asText()
     )
 
     fun parseCollectionsList(json: String, userId: Long): CollectionsList? {
@@ -50,6 +62,8 @@ object JSON {
         } catch (ioe: IOException) {
             Crashlytics.logException(ioe)
         }
+
+        analytics.failedParseCollectionsList(userId)
 
         return null
     }

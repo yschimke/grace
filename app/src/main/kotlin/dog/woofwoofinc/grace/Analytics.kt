@@ -38,7 +38,7 @@ class Analytics(private val answers: Answers) {
 
 
     /*
-     * Content events
+     * Content events.
      */
 
     fun timelineImpression(timeline: Timeline) {
@@ -68,27 +68,24 @@ class Analytics(private val answers: Answers) {
      * Twitter API events.
      */
 
-    fun precachedCollectionsList() {
-        answers.logCustom(CustomEvent("precachedcollections"))
+    fun getCollectionsList() {
+        answers.logCustom(CustomEvent("getcollectionslist"))
     }
 
-    fun refreshCollectionsList() {
-        answers.logCustom(CustomEvent("refreshcollections"))
-    }
-
-    fun refreshedCollectionsList() {
-        answers.logCustom(CustomEvent("refreshedcollection"))
-    }
-
-    fun failedCollectionsListParse(session: TwitterSession) {
-        val event = CustomEvent("failedcollectionparse")
-                .putCustomAttribute("userid", session.userId)
+    fun failedGetCollectionsList(userId: Long) {
+        val event = CustomEvent("failedgetcollectionslist")
+                .putCustomAttribute("userid", userId)
         answers.logCustom(event)
     }
 
-    fun failedCollectionsListFetch(session: TwitterSession) {
-        val event = CustomEvent("failedcollectionfetch")
-                .putCustomAttribute("userid", session.userId)
+
+    /*
+     * Parse errors.
+     */
+
+    fun failedParseCollectionsList(userId: Long) {
+        val event = CustomEvent("failedparsecollectionslist")
+            .putCustomAttribute("userid", userId)
         answers.logCustom(event)
     }
 }

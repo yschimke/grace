@@ -63,7 +63,7 @@ object Json {
             Crashlytics.logException(ioe)
         }
 
-        analytics.failedParseCollectionsList(userId)
+        analytics.failedParseCollectionsList()
 
         return null
     }

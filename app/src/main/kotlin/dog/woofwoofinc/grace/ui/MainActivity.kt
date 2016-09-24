@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         session?.let {
-            analytics!!.loggedIn(session)
+            analytics!!.loggedIn()
         }
     }
 

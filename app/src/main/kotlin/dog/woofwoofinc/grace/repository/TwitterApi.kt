@@ -58,7 +58,7 @@ object TwitterApi {
             Crashlytics.logException(ioe)
         }
 
-        analytics.failedGetCollectionsList(session.userId)
+        analytics.failedGetCollectionsList()
         Log.d(TAG, "Failed to fetch collections/list Json.")
 
         return null

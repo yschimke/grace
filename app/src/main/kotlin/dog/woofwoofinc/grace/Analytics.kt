@@ -4,7 +4,6 @@ import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.answers.ContentViewEvent
 import com.crashlytics.android.answers.CustomEvent
 import com.crashlytics.android.answers.LoginEvent
-import com.twitter.sdk.android.core.TwitterSession
 
 class Analytics(private val answers: Answers) {
 
@@ -13,26 +12,28 @@ class Analytics(private val answers: Answers) {
      */
 
     fun notLoggedIn() {
-        answers.logCustom(CustomEvent("notloggedin"))
-    }
-
-    fun loggedIn(session: TwitterSession) {
         answers.logCustom(
-                CustomEvent("session").putCustomAttribute("userid", session.userId)
+            CustomEvent("notloggedin")
         )
     }
 
-    fun login(session: TwitterSession) {
+    fun loggedIn() {
+        answers.logCustom(
+            CustomEvent("loggedin")
+        )
+    }
+
+    fun login() {
         answers.logLogin(
-                LoginEvent()
-                        .putSuccess(true)
-                        .putCustomAttribute("userid", session.userId)
+            LoginEvent()
+                .putSuccess(true)
         )
     }
 
     fun failedLogin() {
         answers.logLogin(
-                LoginEvent().putSuccess(false)
+            LoginEvent()
+                .putSuccess(false)
         )
     }
 
@@ -43,10 +44,9 @@ class Analytics(private val answers: Answers) {
 
     fun timelineImpression(timeline: Timeline) {
         answers.logContentView(
-                ContentViewEvent()
-                        .putContentName(timeline.name)
-                        .putContentType("Collection")
-                        .putContentId("${timeline.id}")
+            ContentViewEvent()
+                .putContentType("Collection")
+                .putContentId("${timeline.id}")
         )
     }
 
@@ -56,11 +56,15 @@ class Analytics(private val answers: Answers) {
      */
 
     fun foreground() {
-        answers.logCustom(CustomEvent("foreground"))
+        answers.logCustom(
+            CustomEvent("foreground")
+        )
     }
 
     fun background() {
-        answers.logCustom(CustomEvent("background"))
+        answers.logCustom(
+            CustomEvent("background")
+        )
     }
 
 
@@ -69,13 +73,15 @@ class Analytics(private val answers: Answers) {
      */
 
     fun getCollectionsList() {
-        answers.logCustom(CustomEvent("getcollectionslist"))
+        answers.logCustom(
+            CustomEvent("getcollectionslist")
+        )
     }
 
-    fun failedGetCollectionsList(userId: Long) {
-        val event = CustomEvent("failedgetcollectionslist")
-                .putCustomAttribute("userid", userId)
-        answers.logCustom(event)
+    fun failedGetCollectionsList() {
+        answers.logCustom(
+            CustomEvent("failedgetcollectionslist")
+        )
     }
 
 
@@ -83,9 +89,9 @@ class Analytics(private val answers: Answers) {
      * Parse errors.
      */
 
-    fun failedParseCollectionsList(userId: Long) {
-        val event = CustomEvent("failedparsecollectionslist")
-            .putCustomAttribute("userid", userId)
-        answers.logCustom(event)
+    fun failedParseCollectionsList() {
+        answers.logCustom(
+            CustomEvent("failedparsecollectionslist")
+        )
     }
 }

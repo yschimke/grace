@@ -28,8 +28,7 @@ class LoginActivity : Activity() {
 
         twitter_login_button.callback = object : Callback<TwitterSession>() {
             override fun success(result: Result<TwitterSession>) {
-                val session = result.data
-                analytics.login(session)
+                analytics.login()
 
                 // Start the main activity.
                 val intent = Intent(applicationContext, MainActivity::class.java)

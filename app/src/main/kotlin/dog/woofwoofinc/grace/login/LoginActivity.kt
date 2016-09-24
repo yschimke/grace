@@ -1,4 +1,4 @@
-package dog.woofwoofinc.grace.ui
+package dog.woofwoofinc.grace.login
 
 import android.app.Activity
 import android.content.Intent
@@ -14,6 +14,7 @@ import com.twitter.sdk.android.core.TwitterException
 import com.twitter.sdk.android.core.TwitterSession
 import dog.woofwoofinc.grace.Analytics
 import dog.woofwoofinc.grace.R
+import dog.woofwoofinc.grace.home.HomeActivity
 
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -30,8 +31,8 @@ class LoginActivity : Activity() {
             override fun success(result: Result<TwitterSession>) {
                 analytics.login()
 
-                // Start the main activity.
-                val intent = Intent(applicationContext, MainActivity::class.java)
+                // Start the home activity.
+                val intent = Intent(applicationContext, HomeActivity::class.java)
                 startActivity(intent)
 
                 // Finish this activity so back button doesn't return here.

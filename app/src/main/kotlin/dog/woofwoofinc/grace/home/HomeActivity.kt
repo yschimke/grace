@@ -1,4 +1,4 @@
-package dog.woofwoofinc.grace.ui
+package dog.woofwoofinc.grace.home
 
 import android.content.Intent
 import android.os.Bundle
@@ -23,6 +23,7 @@ import com.twitter.sdk.android.tweetui.CollectionTimeline
 import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter
 
 import dog.woofwoofinc.grace.*
+import dog.woofwoofinc.grace.login.LoginActivity
 import dog.woofwoofinc.grace.repository.ObserverAdapter
 import dog.woofwoofinc.grace.repository.Repository
 
@@ -36,7 +37,7 @@ import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 
-class MainActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity() {
 
     private var analytics: Analytics? = null
     private val collectionsListReference = AtomicReference<CollectionsList>()

@@ -1,5 +1,6 @@
 package dog.woofwoofinc.grace.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -94,12 +95,6 @@ class HomeActivity : AppCompatActivity() {
                 // Set the toolbar title.
                 toolbar.title = timeline.name
 
-                // Scroll to top when title clicked.
-                val titleView: View? = toolbar.findFirstViewWithText(timeline.name)
-                titleView?.setOnClickListener {
-                    collection_list_view.smoothScrollToPosition(0)
-                }
-
                 // Set the timeline in the home content view.
                 val collection = CollectionTimeline.Builder()
                         .id(id)
@@ -120,11 +115,21 @@ class HomeActivity : AppCompatActivity() {
 
                 analytics!!.timelineImpression(timeline)
 
-                // Swipe to Refresh
+                // Invalidate the option menu to trigger the refresh which
+                // enables the share, publish, etc menu items.
+                invalidateOptionsMenu()
+
+                // Swipe to refresh.
                 val swipeRefreshLayout = find<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
                 swipeRefreshLayout.setOnRefreshListener {
                     swipeRefreshLayout.isRefreshing = true
                     adapter.refresh(swipeRefreshCallback)
+                }
+
+                // Scroll to top when title clicked.
+                val titleView: View? = toolbar.findFirstViewWithText(timeline.name)
+                titleView?.setOnClickListener {
+                    collection_list_view.smoothScrollToPosition(0)
                 }
             }
         }
@@ -263,13 +268,32 @@ class HomeActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val showCollectionOptions = collection_list_view.tag != null
+
+        menu.findItem(R.id.action_share).isVisible = showCollectionOptions
+        menu.findItem(R.id.action_refresh).isVisible = showCollectionOptions
+        menu.findItem(R.id.action_publish).isVisible = showCollectionOptions
+
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
 
-        if (id == R.id.action_refresh) {
+        if (id == R.id.action_share) {
+            val url = collection_list_view.tag.toString()
+            val intent = Intent(Intent.ACTION_SEND)
+            intent.type = "text/plain"
+            intent.putExtra(Intent.EXTRA_TEXT, url)
+
+            startActivity(Intent.createChooser(intent, "Share"))
+
+            return true
+        } else if (id == R.id.action_refresh) {
             val swipeRefreshLayout = find<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
             val adapter = collection_list_view.adapter as TweetTimelineListAdapter
 

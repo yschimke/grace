@@ -16,7 +16,11 @@ fun InputStream.readProperties(): Properties {
 }
 
 fun Twitter.getSession(): TwitterSession? {
-    return Twitter.getInstance().core.sessionManager.activeSession
+    return this.core.sessionManager.activeSession
+}
+
+fun Twitter.logOut() {
+    return this.core.logOut()
 }
 
 fun View.findFirstViewWithText(text: String): View? {

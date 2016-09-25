@@ -282,7 +282,15 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
 
             return true
-        } else if (id == R.id.action_settings) {
+        } else if (id == R.id.action_logout) {
+            Twitter.getInstance().logOut()
+
+            startActivity<HomeActivity>()
+            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out)
+
+            // Finish this activity so the back button doesn't return here.
+            finish()
+
             return true
         }
 

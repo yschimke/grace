@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -11,6 +12,7 @@ import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 
+import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
 import com.jakewharton.rxbinding.support.design.widget.itemSelections
 import com.jenzz.appstate.AppState
@@ -18,7 +20,12 @@ import com.jenzz.appstate.RxAppState
 import com.squareup.picasso.Picasso
 import com.tumblr.remember.Remember
 import com.twitter.sdk.android.Twitter
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.TwitterException
+import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.tweetui.CollectionTimeline
+import com.twitter.sdk.android.tweetui.TimelineResult
 import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter
 
 import dog.woofwoofinc.grace.*
@@ -44,6 +51,18 @@ class HomeActivity : AppCompatActivity() {
     private var appStateSubscription: Subscription? = null
     private var collectionsListSubscription: Subscription? = null
     private var navigationViewSubscription: Subscription? = null
+
+    private val swipeRefreshCallback = object : Callback<TimelineResult<Tweet>>() {
+        override fun success(result: Result<TimelineResult<Tweet>>) {
+            val swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+            swipeRefreshLayout.isRefreshing = false
+        }
+
+        override fun failure(exception: TwitterException) {
+            Crashlytics.logException(exception)
+            analytics!!.failedRefresh()
+        }
+    }
 
     private fun checkLoggedIn() {
         val session = Twitter.getInstance().getSession()
@@ -90,6 +109,13 @@ class HomeActivity : AppCompatActivity() {
                 collection_list_view.tag = timeline.collectionUrl
 
                 analytics!!.timelineImpression(timeline)
+
+                // Swipe to Refresh
+                val swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+                swipeRefreshLayout.setOnRefreshListener {
+                    swipeRefreshLayout.isRefreshing = true
+                    adapter.refresh(swipeRefreshCallback)
+                }
             }
         }
     }
@@ -233,10 +259,19 @@ class HomeActivity : AppCompatActivity() {
         // as you specify a parent activity in AndroidManifest.xml.
         val id = item.itemId
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_refresh) {
+            val swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+            val adapter = collection_list_view.adapter as TweetTimelineListAdapter
+
+            swipeRefreshLayout.isRefreshing = true
+            adapter.refresh(swipeRefreshCallback)
+
+            return true
+        } else if (id == R.id.action_settings) {
             return true
         }
 
+        // Otherwise let the superclass handle the action.
         return super.onOptionsItemSelected(item)
     }
 }

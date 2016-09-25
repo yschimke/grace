@@ -84,6 +84,12 @@ class Analytics(private val answers: Answers) {
         )
     }
 
+    fun failedRefresh() {
+        answers.logCustom(
+            CustomEvent("failedrefresh")
+        )
+    }
+
 
     /*
      * Parse errors.

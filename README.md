@@ -6,7 +6,7 @@ Grace
 =====
 Twitter Collection app for Android.
 
-![](docs/_static/login.png?raw=true)
+![](docs/_static/login.png?raw=true) ![](docs/_static/home.png?raw=true)
 
 
 Credentials

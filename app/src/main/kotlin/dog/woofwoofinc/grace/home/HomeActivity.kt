@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 
@@ -90,6 +91,12 @@ class HomeActivity : AppCompatActivity() {
             id?.let {
                 // Set the toolbar title.
                 toolbar.title = timeline.name
+
+                // Scroll to top when title clicked.
+                val titleView: View? = toolbar.findFirstViewWithText(timeline.name)
+                titleView?.setOnClickListener {
+                    collection_list_view.smoothScrollToPosition(0)
+                }
 
                 // Set the timeline in the home content view.
                 val collection = CollectionTimeline.Builder()

@@ -60,7 +60,7 @@ class GraceApplication : Application() {
                 // It's not worth continuing to load the app because the Twitter application
                 // key and secret are not available. But Crashlytics is not initialised yet to log
                 // this exception, so create Fabric with just Crashlytics and hard crash
-                d("Failed to key/secret from app.properties.")
+                d("Failed to load key/secret from app.properties.")
                 Fabric.with(this, Crashlytics())
 
                 throw e

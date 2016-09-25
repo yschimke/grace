@@ -23,8 +23,8 @@ import com.pawegio.kandroid.startActivity
 import com.squareup.picasso.Picasso
 import com.tumblr.remember.Remember
 import com.twitter.sdk.android.Twitter
-import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Callback
+import com.twitter.sdk.android.core.Result
 import com.twitter.sdk.android.core.TwitterException
 import com.twitter.sdk.android.core.models.Tweet
 import com.twitter.sdk.android.tweetui.CollectionTimeline
@@ -32,6 +32,8 @@ import com.twitter.sdk.android.tweetui.TimelineResult
 import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter
 
 import dog.woofwoofinc.grace.*
+import dog.woofwoofinc.grace.R.anim.abc_fade_in
+import dog.woofwoofinc.grace.R.anim.abc_fade_out
 import dog.woofwoofinc.grace.login.LoginActivity
 import dog.woofwoofinc.grace.repository.ObserverAdapter
 import dog.woofwoofinc.grace.repository.Repository
@@ -112,8 +114,8 @@ class HomeActivity : AppCompatActivity() {
 
                 Remember.putString("selected-timeline", timeline.collectionUrl)
 
-                // Tag the collection_list_view so we can determine if it is still showing
-                // the collection we want after app running state changes, etc.
+                // Tag the collection_list_view so we can tell if it is showing
+                // the correct collection after app running state changes, etc.
                 collection_list_view.tag = timeline.collectionUrl
 
                 analytics!!.timelineImpression(timeline)
@@ -206,7 +208,7 @@ class HomeActivity : AppCompatActivity() {
                                     .into(avatarImageView)
 
                             // Update the collections list in the navigation drawer.
-                            val menu = navigationView.getMenu()
+                            val menu = navigationView.menu
 
                             menu.clear()
                             for (timeline in collectionsList.timelines) {
@@ -286,7 +288,7 @@ class HomeActivity : AppCompatActivity() {
             Twitter.getInstance().logOut()
 
             startActivity<HomeActivity>()
-            overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out)
+            overridePendingTransition(abc_fade_in, abc_fade_out)
 
             // Finish this activity so the back button doesn't return here.
             finish()

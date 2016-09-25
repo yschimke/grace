@@ -1,6 +1,5 @@
 package dog.woofwoofinc.grace.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -17,6 +16,8 @@ import com.crashlytics.android.answers.Answers
 import com.jakewharton.rxbinding.support.design.widget.itemSelections
 import com.jenzz.appstate.AppState
 import com.jenzz.appstate.RxAppState
+import com.pawegio.kandroid.find
+import com.pawegio.kandroid.startActivity
 import com.squareup.picasso.Picasso
 import com.tumblr.remember.Remember
 import com.twitter.sdk.android.Twitter
@@ -54,7 +55,7 @@ class HomeActivity : AppCompatActivity() {
 
     private val swipeRefreshCallback = object : Callback<TimelineResult<Tweet>>() {
         override fun success(result: Result<TimelineResult<Tweet>>) {
-            val swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+            val swipeRefreshLayout = find<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
             swipeRefreshLayout.isRefreshing = false
         }
 
@@ -70,8 +71,7 @@ class HomeActivity : AppCompatActivity() {
             analytics!!.notLoggedIn()
 
             // Start the login activity.
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            startActivity<LoginActivity>()
 
             // Finish this activity so the back button doesn't return here.
             finish()
@@ -111,7 +111,7 @@ class HomeActivity : AppCompatActivity() {
                 analytics!!.timelineImpression(timeline)
 
                 // Swipe to Refresh
-                val swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+                val swipeRefreshLayout = find<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
                 swipeRefreshLayout.setOnRefreshListener {
                     swipeRefreshLayout.isRefreshing = true
                     adapter.refresh(swipeRefreshCallback)
@@ -174,11 +174,11 @@ class HomeActivity : AppCompatActivity() {
             // name_text_view, avatar_image_view) are null after changes to the app running state.
             // e.g. swipe it out of the recent apps list and restart. Also displays some problems on
             // rotation. Use findViewById for now.
-            val navigationView = findViewById(R.id.navigation_view) as NavigationView
+            val navigationView = find<NavigationView>(R.id.navigation_view)
             val header = navigationView.getHeaderView(0)
-            val screenNameTextView = header.findViewById(R.id.screen_name_text_view) as TextView
-            val nameTextView = header.findViewById(R.id.name_text_view) as TextView
-            val avatarImageView = header.findViewById(R.id.avatar_image_view) as ImageView
+            val screenNameTextView = header.find<TextView>(R.id.screen_name_text_view)
+            val nameTextView = header.find<TextView>(R.id.name_text_view)
+            val avatarImageView = header.find<ImageView>(R.id.avatar_image_view)
 
             // Subscribe for Twitter API responses on the UI thread to apply updates.
             collectionsListSubscription = Repository.getCollectionsListObservable()
@@ -260,7 +260,7 @@ class HomeActivity : AppCompatActivity() {
         val id = item.itemId
 
         if (id == R.id.action_refresh) {
-            val swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout) as SwipeRefreshLayout
+            val swipeRefreshLayout = find<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
             val adapter = collection_list_view.adapter as TweetTimelineListAdapter
 
             swipeRefreshLayout.isRefreshing = true

@@ -1,9 +1,9 @@
 package dog.woofwoofinc.grace
 
 import android.app.Application
-import android.util.Log
 
 import com.crashlytics.android.Crashlytics
+import com.pawegio.kandroid.d
 import com.tumblr.remember.Remember
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.TwitterAuthConfig
@@ -13,8 +13,6 @@ import io.fabric.sdk.android.Fabric
 class GraceApplication : Application() {
 
     companion object {
-        val TAG = GraceApplication::class.asTag()
-
         var instance: GraceApplication? = null
             private set
     }
@@ -40,7 +38,7 @@ class GraceApplication : Application() {
                 // It's not worth continuing to load the app because the Twitter application
                 // key and secret are not available. But Crashlytics is not initialised yet to log
                 // this exception, so create Fabric with just Crashlytics and hard crash
-                Log.d(TAG, "Failed to key/secret from app.properties.", e)
+                d("Failed to key/secret from app.properties.")
                 Fabric.with(this, Crashlytics())
 
                 throw e

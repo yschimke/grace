@@ -78,6 +78,7 @@ dependencies {
     compile 'com.github.jenzz:RxAppState:1.1.0'
     compile 'com.jakewharton.rxbinding:rxbinding-design-kotlin:0.4.0'
 
+    compile 'com.pawegio.kandroid:kandroid:0.6.12@aar'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.8.3'
     compile 'com.tumblr:remember:1.0.0@aar'

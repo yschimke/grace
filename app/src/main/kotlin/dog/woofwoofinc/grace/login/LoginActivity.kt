@@ -4,10 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
+import com.pawegio.kandroid.longToast
+import com.pawegio.kandroid.startActivity
 import com.twitter.sdk.android.core.Callback
 import com.twitter.sdk.android.core.Result
 import com.twitter.sdk.android.core.TwitterException
@@ -22,18 +23,18 @@ class LoginActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val analytics = Analytics(Answers.getInstance())
 
         // Organise the UI
         setContentView(R.layout.activity_login)
 
         twitter_login_button.callback = object : Callback<TwitterSession>() {
+            val analytics = Analytics(Answers.getInstance())
+
             override fun success(result: Result<TwitterSession>) {
                 analytics.login()
 
                 // Start the home activity.
-                val intent = Intent(applicationContext, HomeActivity::class.java)
-                startActivity(intent)
+                startActivity<HomeActivity>()
 
                 // Finish this activity so back button doesn't return here.
                 finish()
@@ -42,10 +43,9 @@ class LoginActivity : Activity() {
             override fun failure(exception: TwitterException) {
                 Crashlytics.logException(exception)
 
-                val msg = "Authentication Failure"
-                Toast.makeText(applicationContext, msg, Toast.LENGTH_LONG).show()
+                longToast("Authentication Failure")
+                Log.d("TwitterKit", "Authentication Failure", exception)
 
-                Log.d("TwitterKit", msg, exception)
                 analytics.failedLogin()
             }
         }
@@ -54,7 +54,7 @@ class LoginActivity : Activity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Make sure that the loginButton hears the result from any Activity that it triggered.
+        // Ensure the login button gets results for any activities it triggers.
         twitter_login_button.onActivityResult(requestCode, resultCode, data)
     }
 }

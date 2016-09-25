@@ -1,9 +1,8 @@
 package dog.woofwoofinc.grace.repository
 
-import android.util.Log
-
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
+import com.pawegio.kandroid.d
 import com.twitter.sdk.android.core.OAuthSigning
 import com.twitter.sdk.android.core.TwitterAuthConfig
 import com.twitter.sdk.android.core.TwitterAuthToken
@@ -16,8 +15,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 object TwitterApi {
-
-    private val TAG = TwitterApi::class.asTag()
 
     private val analytics: Analytics
     private val twitterAuthConfig: TwitterAuthConfig
@@ -59,7 +56,7 @@ object TwitterApi {
         }
 
         analytics.failedGetCollectionsList()
-        Log.d(TAG, "Failed to fetch collections/list Json.")
+        d("Failed to fetch collections/list Json.")
 
         return null
     }

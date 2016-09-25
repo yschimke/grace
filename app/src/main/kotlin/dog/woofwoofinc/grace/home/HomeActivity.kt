@@ -22,7 +22,6 @@ import com.pawegio.kandroid.WebIntent
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.startActivity
 import com.squareup.picasso.Picasso
-import com.tumblr.remember.Remember
 import com.twitter.sdk.android.Twitter
 import com.twitter.sdk.android.core.Callback
 import com.twitter.sdk.android.core.Result
@@ -107,7 +106,7 @@ class HomeActivity : AppCompatActivity() {
 
                 collection_list_view.adapter = adapter
 
-                Remember.putString("selected-timeline", timeline.collectionUrl)
+                Repository.setSelectedCollectionUrl(timeline.collectionUrl)
 
                 // Tag the collection_list_view so we can tell if it is showing
                 // the correct collection after app running state changes, etc.
@@ -226,10 +225,10 @@ class HomeActivity : AppCompatActivity() {
                             // Must display a collection if at least one is available.
                             if (!collectionsList.timelines.isEmpty()) {
                                 // Get selected collection or fallback to first collection in list.
-                                val firstCollectionUrl = collectionsList.timelines[0].collectionUrl
-                                val selectedCollectionUrl = Remember.getString("selected-timeline", firstCollectionUrl)
+                                val selectedCollectionUrl = Repository.getSelectedCollectionUrl()
+                                val collectionUrl = selectedCollectionUrl ?: collectionsList.timelines[0].collectionUrl
 
-                                val currentTimeline = collectionsList.findTimelineByCollectionUrl(selectedCollectionUrl)
+                                val currentTimeline = collectionsList.findTimelineByCollectionUrl(collectionUrl)
                                 currentTimeline?.let {
                                     setCollection(currentTimeline)
                                 }

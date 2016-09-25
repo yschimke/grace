@@ -19,6 +19,14 @@ object Repository {
         this.collectionsListObservable = PublishSubject<CollectionsList>()
     }
 
+    fun getSelectedCollectionUrl(): String? {
+        return SharedPreferencesCache.getSelectedCollectionUrl()
+    }
+
+    fun setSelectedCollectionUrl(url: String) {
+        SharedPreferencesCache.setSelectedCollectionUrl(url)
+    }
+
     /**
      * I/O operation results are returned by Rx Observable channels. Get the
      * Observable channel for the user's list of available collections. Clients

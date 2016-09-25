@@ -3,6 +3,7 @@ package dog.woofwoofinc.grace
 import android.app.Application
 
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.answers.Answers
 import com.pawegio.kandroid.d
 import com.tumblr.remember.Remember
 import com.twitter.sdk.android.Twitter
@@ -21,7 +22,7 @@ class GraceApplication : Application() {
         super.onCreate()
         instance = this
 
-        Fabric.with(this, Crashlytics(), Twitter(twitterAuthConfig))
+        Fabric.with(this, Crashlytics(), Answers(), Twitter(twitterAuthConfig))
         Remember.init(applicationContext, "dog.woofwoofinc.grace")
     }
 

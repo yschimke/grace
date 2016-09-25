@@ -5,6 +5,9 @@ import com.twitter.sdk.android.core.TwitterSession
 import dog.woofwoofinc.grace.CollectionsList
 
 import rx.Observable
+import rx.lang.kotlin.deferredObservable
+import rx.lang.kotlin.emptyObservable
+import rx.lang.kotlin.PublishSubject
 import rx.schedulers.Schedulers
 import rx.subjects.PublishSubject
 
@@ -13,7 +16,7 @@ object Repository {
     private val collectionsListObservable: PublishSubject<CollectionsList>
 
     init {
-        this.collectionsListObservable = PublishSubject.create<CollectionsList>()
+        this.collectionsListObservable = PublishSubject<CollectionsList>()
     }
 
     /**
@@ -22,7 +25,7 @@ object Repository {
      * should subscribe and refresh the UI for all received notifications.
      */
     fun getCollectionsListObservable(): Observable<CollectionsList> {
-        // Exposed as an Observable interface, not as BehaviourSubject.
+        // Exposed as an Observable interface, not as PublishSubject.
         return collectionsListObservable
     }
 
@@ -52,7 +55,7 @@ object Repository {
     fun requestCollectionsList(session: TwitterSession) {
         // Use a deferred Observable to move the network call off the current
         // thread and onto a background IO thread.
-        val task = Observable.defer {
+        val task = deferredObservable {
 
             val json = TwitterApi.getCollectionsList(session)
             json?.let {
@@ -64,10 +67,10 @@ object Repository {
                 }
             }
 
-            Observable.empty<String>()
+            emptyObservable<String>()
         }
 
         // Subscribe to the task (on an IO thread) to trigger execution.
-        task.subscribeOn(Schedulers.io()).subscribe(ObserverAdapter<String>())
+        task.subscribeOn(Schedulers.io()).subscribe(emptyObserver())
     }
 }

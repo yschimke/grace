@@ -1,6 +1,7 @@
 package dog.woofwoofinc.grace
 
 import android.app.Application
+import android.os.StrictMode
 
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
@@ -24,6 +25,26 @@ class GraceApplication : Application() {
 
         Fabric.with(this, Crashlytics(), Answers(), Twitter(twitterAuthConfig))
         Remember.init(applicationContext, "dog.woofwoofinc.grace")
+
+        // Strict mode now because of disk reads in Fabric and Remember inits.
+        if (BuildConfig.DEBUG) {
+            // Set strict mode for current(=UI) thread.
+            StrictMode.setThreadPolicy(
+                StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDialog()
+                    .penaltyDeath()
+                    .build()
+            )
+            StrictMode.setVmPolicy(
+                StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build()
+            )
+        }
     }
 
     val twitterAuthConfig: TwitterAuthConfig

@@ -90,7 +90,7 @@ class HomeActivity : AppCompatActivity() {
                 // Set the toolbar title.
                 toolbar.title = timeline.name
 
-                // Set the timeline in the main content view.
+                // Set the timeline in the home content view.
                 val collection = CollectionTimeline.Builder()
                         .id(id)
                         .build()
@@ -249,7 +249,7 @@ class HomeActivity : AppCompatActivity() {
         super.onCreateOptionsMenu(menu)
 
         // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
+        menuInflater.inflate(R.menu.home, menu)
         return true
     }
 

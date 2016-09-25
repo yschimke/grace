@@ -29,9 +29,9 @@ import dog.woofwoofinc.grace.repository.Repository
 import java.util.concurrent.atomic.AtomicReference
 
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.app_bar_home.*
+import kotlinx.android.synthetic.main.content_home.*
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -105,7 +105,7 @@ class HomeActivity : AppCompatActivity() {
             // Why could the session have been null if checkLoggedIn finish()-ed?
 
             // Organise the UI.
-            setContentView(R.layout.activity_main)
+            setContentView(R.layout.activity_home)
             setSupportActionBar(toolbar)
 
             val toggle = ActionBarDrawerToggle(

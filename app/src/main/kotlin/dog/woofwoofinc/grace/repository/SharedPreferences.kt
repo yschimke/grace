@@ -2,7 +2,7 @@ package dog.woofwoofinc.grace.repository
 
 import com.tumblr.remember.Remember
 
-object SharedPreferencesCache {
+object SharedPreferences {
 
     fun getSelectedCollectionUrl(): String? {
         return Remember.getString("selected-collection-url", null)

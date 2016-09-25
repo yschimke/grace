@@ -20,11 +20,11 @@ object Repository {
     }
 
     fun getSelectedCollectionUrl(): String? {
-        return SharedPreferencesCache.getSelectedCollectionUrl()
+        return SharedPreferences.getSelectedCollectionUrl()
     }
 
     fun setSelectedCollectionUrl(url: String) {
-        SharedPreferencesCache.setSelectedCollectionUrl(url)
+        SharedPreferences.setSelectedCollectionUrl(url)
     }
 
     /**
@@ -44,7 +44,7 @@ object Repository {
      * order to receive the result.
      */
     fun requestCachedCollectionsList(session: TwitterSession) {
-        val json = SharedPreferencesCache.getCollectionsList(session.userId)
+        val json = SharedPreferences.getCollectionsList(session.userId)
         json?.let {
             val collections = Json.parseCollectionsList(json, session.userId)
 
@@ -70,7 +70,7 @@ object Repository {
                 val collections = Json.parseCollectionsList(json, session.userId)
 
                 collections?.let {
-                    SharedPreferencesCache.setCollectionsList(session.userId, json)
+                    SharedPreferences.setCollectionsList(session.userId, json)
                     collectionsListObservable.onNext(collections)
                 }
             }

@@ -8,6 +8,11 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_publish"
+        android:title="@string/action_publish"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"

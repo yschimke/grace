@@ -16,6 +16,7 @@ import com.crashlytics.android.answers.Answers
 import com.jakewharton.rxbinding.support.design.widget.itemSelections
 import com.jenzz.appstate.AppState
 import com.jenzz.appstate.RxAppState
+import com.pawegio.kandroid.WebIntent
 import com.pawegio.kandroid.find
 import com.pawegio.kandroid.startActivity
 import com.squareup.picasso.Picasso
@@ -265,6 +266,13 @@ class HomeActivity : AppCompatActivity() {
 
             swipeRefreshLayout.isRefreshing = true
             adapter.refresh(swipeRefreshCallback)
+
+            return true
+        } else if (id == R.id.action_publish) {
+            val url = collection_list_view.tag.toString()
+            val intent = WebIntent("https://publish.twitter.com/?query=${url}")
+
+            startActivity(intent)
 
             return true
         } else if (id == R.id.action_settings) {

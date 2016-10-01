@@ -37,6 +37,15 @@ object Repository {
         return collectionsListObservable
     }
 
+    fun getCachedCollectionsList(session: TwitterSession): CollectionsList? {
+        val json = SharedPreferences.getCollectionsList(session.userId)
+        json?.let {
+            return Json.parseCollectionsList(json, session.userId)
+        }
+
+        return null
+    }
+
     /**
      * Trigger a reload of the user's list of available collections from cached
      * storage and push onto the Rx Observable channel. Clients should
@@ -44,13 +53,9 @@ object Repository {
      * order to receive the result.
      */
     fun requestCachedCollectionsList(session: TwitterSession) {
-        val json = SharedPreferences.getCollectionsList(session.userId)
-        json?.let {
-            val collections = Json.parseCollectionsList(json, session.userId)
-
-            collections?.let {
-                collectionsListObservable.onNext(collections)
-            }
+        val collections = getCachedCollectionsList(session)
+        collections?.let {
+            collectionsListObservable.onNext(collections)
         }
     }
 

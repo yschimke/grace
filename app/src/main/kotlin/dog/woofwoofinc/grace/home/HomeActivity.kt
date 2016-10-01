@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -279,6 +280,7 @@ class HomeActivity : AppCompatActivity() {
 
         menu.findItem(R.id.action_share).isVisible = showCollectionOptions
         menu.findItem(R.id.action_refresh).isVisible = showCollectionOptions
+        menu.findItem(R.id.action_sort).isVisible = showCollectionOptions
         menu.findItem(R.id.action_publish).isVisible = showCollectionOptions
 
         return super.onPrepareOptionsMenu(menu)
@@ -302,6 +304,34 @@ class HomeActivity : AppCompatActivity() {
         } else if (id == R.id.action_refresh) {
             refreshCollection()
 
+            return true
+        } else if (id == R.id.action_sort) {
+            val session = Twitter.getInstance().getSession()
+            session?.let {
+                val url = collection_list_view.tag.toString()
+                val options = resources.getStringArray(R.array.sort_options)
+
+                AlertDialog.Builder(this).
+                    setItems(options) { dialog, which ->
+                        val order: TimelineOrder? = when(options[which]) {
+                            resources.getString(R.string.sort_oldest_first) -> TimelineOrder.OLDEST_FIRST
+                            resources.getString(R.string.sort_newest_first) -> TimelineOrder.NEWEST_FIRST
+                            resources.getString(R.string.sort_curation_order) -> TimelineOrder.CURATION_ORDER
+                            else -> null
+                        }
+
+                        order?.let {
+                            Repository.setCollectionTimelineOrder(session, url, order).
+                                observeOn(AndroidSchedulers.mainThread()).
+                                subscribe { success: Boolean ->
+                                    if (success) {
+                                        refreshCollection()
+                                    }
+                                }
+                        }
+                    }.
+                    show()
+            }
 
             return true
         } else if (id == R.id.action_publish) {

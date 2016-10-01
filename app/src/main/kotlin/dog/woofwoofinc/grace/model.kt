@@ -23,7 +23,13 @@ data class User(val id: Long, val name: String, val screenName: String, val desc
 }
 
 
-data class Timeline(val name: String, val description: String?, val collectionUrl: String, val visibility: String) {
+data class Timeline(
+    val name: String,
+    val description: String?,
+    val collectionUrl: String,
+    val visibility: String,
+    val timelineOrder: String
+) {
 
     val id: Long?
         get() {
@@ -38,4 +44,11 @@ data class Timeline(val name: String, val description: String?, val collectionUr
 
             return null
         }
+}
+
+
+enum class TimelineOrder(val param: String) {
+    NEWEST_FIRST("tweet_reverse_chron"),
+    OLDEST_FIRST("tweet_chron"),
+    CURATION_ORDER("curation_reverse_chron")
 }

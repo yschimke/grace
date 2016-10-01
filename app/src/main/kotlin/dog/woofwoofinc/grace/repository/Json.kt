@@ -34,7 +34,8 @@ object Json {
         timeline.get("name").asText(),
         timeline.get("description")?.asText(), // Not all Collections have descriptions.
         timeline.get("collection_url").asText(),
-        timeline.get("visibility").asText()
+        timeline.get("visibility").asText(),
+        timeline.get("timeline_order").asText()
     )
 
     fun parseCollectionsList(json: String, userId: Long): CollectionsList? {

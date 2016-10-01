@@ -72,6 +72,12 @@ class Analytics(private val answers: Answers) {
      * Twitter API events.
      */
 
+    fun failedRefresh() {
+        answers.logCustom(
+            CustomEvent("failedrefresh")
+        )
+    }
+
     fun getCollectionsList() {
         answers.logCustom(
             CustomEvent("getcollectionslist")
@@ -84,9 +90,15 @@ class Analytics(private val answers: Answers) {
         )
     }
 
-    fun failedRefresh() {
+    fun  setCollectionTimelineOrder() {
         answers.logCustom(
-            CustomEvent("failedrefresh")
+            CustomEvent("setcollectiontimelineorder")
+        )
+    }
+
+    fun failedSetCollectionTimelineOrder() {
+        answers.logCustom(
+            CustomEvent("failedsetcollectiontimelineorder")
         )
     }
 

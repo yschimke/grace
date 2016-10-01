@@ -9,6 +9,18 @@
 
     <string name="action_share">Share</string>
     <string name="action_refresh">Refresh</string>
+    <string name="action_sort">Sort</string>
     <string name="action_publish">Publish</string>
     <string name="action_logout">Logout</string>
+
+    <string name="sort_oldest_first">Oldest First</string>
+    <string name="sort_newest_first">Newest First</string>
+    <string name="sort_curation_order">Manual</string>
+
+    <string-array name="sort_options">
+        <item>@string/sort_oldest_first</item>
+        <item>@string/sort_newest_first</item>
+        <item>@string/sort_curation_order</item>
+    </string-array>
+
 </resources>

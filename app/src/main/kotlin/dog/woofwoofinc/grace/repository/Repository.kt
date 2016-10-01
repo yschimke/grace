@@ -3,6 +3,7 @@ package dog.woofwoofinc.grace.repository
 import com.twitter.sdk.android.core.TwitterSession
 
 import dog.woofwoofinc.grace.CollectionsList
+import dog.woofwoofinc.grace.TimelineOrder
 
 import rx.Observable
 import rx.lang.kotlin.deferredObservable
@@ -85,5 +86,32 @@ object Repository {
 
         // Subscribe to the task (on an IO thread) to trigger execution.
         task.subscribeOn(Schedulers.io()).subscribe(emptyObserver())
+    }
+
+    /**
+     * Sort the collection with the given URL.
+     */
+    fun setCollectionTimelineOrder(session: TwitterSession, url: String, order: TimelineOrder): Observable<Boolean> {
+        val collections = getCachedCollectionsList(session)
+        val collection = collections?.findTimelineByCollectionUrl(url)
+
+        val observable = PublishSubject<Boolean>()
+
+        collection?.let {
+            // Use a deferred Observable to move the network call off the current
+            // thread and onto a background IO thread.
+            val task = deferredObservable {
+                val result = TwitterApi.setCollectionTimelineOrder(session, collection, order)
+                observable.onNext(result)
+                observable.onCompleted()
+
+                emptyObservable<String>()
+            }
+
+            // Subscribe to the task (on an IO thread) to trigger execution.
+            task.subscribeOn(Schedulers.io()).subscribe(emptyObserver())
+        }
+
+        return observable
     }
 }

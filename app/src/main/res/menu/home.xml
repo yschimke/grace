@@ -15,6 +15,12 @@
         android:visible="false" />
 
     <item
+        android:id="@+id/action_sort"
+        android:title="@string/action_sort"
+        app:showAsAction="never"
+        android:visible="false" />
+
+    <item
         android:id="@+id/action_publish"
         android:title="@string/action_publish"
         app:showAsAction="never"

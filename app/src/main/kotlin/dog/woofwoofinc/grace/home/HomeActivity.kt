@@ -69,6 +69,14 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun refreshCollection() {
+        val swipeRefreshLayout = find<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
+        val adapter = collection_list_view.adapter as TweetTimelineListAdapter
+
+        swipeRefreshLayout.isRefreshing = true
+        adapter.refresh(swipeRefreshCallback)
+    }
+
     private fun checkLoggedIn() {
         val session = Twitter.getInstance().getSession()
         if (session == null) {
@@ -121,8 +129,7 @@ class HomeActivity : AppCompatActivity() {
                 // Swipe to refresh.
                 val swipeRefreshLayout = find<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
                 swipeRefreshLayout.setOnRefreshListener {
-                    swipeRefreshLayout.isRefreshing = true
-                    adapter.refresh(swipeRefreshCallback)
+                    refreshCollection()
                 }
 
                 // Scroll to top when title clicked.
@@ -293,11 +300,8 @@ class HomeActivity : AppCompatActivity() {
 
             return true
         } else if (id == R.id.action_refresh) {
-            val swipeRefreshLayout = find<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
-            val adapter = collection_list_view.adapter as TweetTimelineListAdapter
+            refreshCollection()
 
-            swipeRefreshLayout.isRefreshing = true
-            adapter.refresh(swipeRefreshCallback)
 
             return true
         } else if (id == R.id.action_publish) {

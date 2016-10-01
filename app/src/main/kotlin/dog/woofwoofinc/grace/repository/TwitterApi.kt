@@ -26,7 +26,7 @@ object TwitterApi {
         this.client = OkHttpClient()
     }
 
-    private fun buildGetRequest(url: String, authToken: TwitterAuthToken): Request {
+    private fun buildGetRequest(authToken: TwitterAuthToken, url: String): Request {
         val signer = OAuthSigning(twitterAuthConfig, authToken)
         val authorization = signer.getAuthorizationHeader("GET", url, null)
 
@@ -43,7 +43,7 @@ object TwitterApi {
         val url = "https://api.twitter.com/1.1/collections/list.json?user_id=${session.userId}"
 
         try {
-            val request = buildGetRequest(url, session.authToken)
+            val request = buildGetRequest(session.authToken, url)
             val response = client.newCall(request).execute()
 
             val body = response.body().string()

@@ -89,6 +89,33 @@ object Repository {
     }
 
     /**
+     * Remove the given Tweet from the collection with given URL.
+     */
+    fun removeTweetFromCollection(session: TwitterSession, url: String, tweetId: Long): Observable<Boolean> {
+        val collections = getCachedCollectionsList(session)
+        val collection = collections?.findTimelineByCollectionUrl(url)
+
+        val observable = PublishSubject<Boolean>()
+
+        collection?.let {
+            // Use a deferred Observable to move the network call off the current
+            // thread and onto a background IO thread.
+            val task = deferredObservable {
+                val result = TwitterApi.removeTweetFromCollection(session, collection, tweetId)
+                observable.onNext(result)
+                observable.onCompleted()
+
+                emptyObservable<String>()
+            }
+
+            // Subscribe to the task (on an IO thread) to trigger execution.
+            task.subscribeOn(Schedulers.io()).subscribe(emptyObserver())
+        }
+
+        return observable
+    }
+
+    /**
      * Sort the collection with the given URL.
      */
     fun setCollectionTimelineOrder(session: TwitterSession, url: String, order: TimelineOrder): Observable<Boolean> {

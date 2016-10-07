@@ -90,6 +90,18 @@ class Analytics(private val answers: Answers) {
         )
     }
 
+    fun removeTweetFromCollection() {
+        answers.logCustom(
+            CustomEvent("removetweetfromcollection")
+        )
+    }
+
+    fun failedRemoveTweetFromCollection() {
+        answers.logCustom(
+            CustomEvent("failedremovetweetfromcollection")
+        )
+    }
+
     fun setCollectionTimelineOrder() {
         answers.logCustom(
             CustomEvent("setcollectiontimelineorder")

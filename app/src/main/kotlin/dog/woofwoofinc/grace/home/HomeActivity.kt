@@ -8,9 +8,12 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.ContextMenu
+import android.view.ContextMenu.ContextMenuInfo
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ImageView
 import android.widget.TextView
 
@@ -108,10 +111,11 @@ class HomeActivity : AppCompatActivity() {
                         .id(id)
                         .build()
 
-                val adapter = TweetTimelineListAdapter.Builder(this)
-                        .setTimeline(collection)
-                        .setViewStyle(R.style.tw__TweetLightWithActionsStyle)
-                        .build()
+                val adapter = ContextMenuTweetTimelineListAdapter.Builder(this)
+                    .setTimeline(collection)
+                    .setViewStyle(R.style.tw__TweetLightWithActionsStyle)
+                    .setOnCreateContextMenuListener(this)
+                    .build()
 
                 collection_list_view.adapter = adapter
 
@@ -126,6 +130,9 @@ class HomeActivity : AppCompatActivity() {
                 // Invalidate the option menu to trigger the refresh which
                 // enables the share, publish, etc menu items.
                 invalidateOptionsMenu()
+
+                // Tweet list popup menu.
+                registerForContextMenu(collection_list_view)
 
                 // Swipe to refresh.
                 val swipeRefreshLayout = find<SwipeRefreshLayout>(R.id.swipe_refresh_layout)
@@ -355,5 +362,37 @@ class HomeActivity : AppCompatActivity() {
 
         // Otherwise let the superclass handle the action.
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, view, menuInfo)
+
+        if (view.id == R.id.collection_list_view) {
+            menuInflater.inflate(R.menu.activity_home_list_item, menu)
+        }
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val info: AdapterContextMenuInfo = item.menuInfo as AdapterContextMenuInfo
+
+        if (item.itemId == R.id.action_remove) {
+            val session = Twitter.getInstance().getSession()
+            session?.let {
+                val url = collection_list_view.tag.toString()
+                val tweetId = info.id
+
+                Repository.removeTweetFromCollection(session, url, tweetId).
+                    observeOn(AndroidSchedulers.mainThread()).
+                    subscribe { success: Boolean ->
+                        if (success) {
+                            refreshCollection()
+                        }
+                    }
+            }
+
+            return true
+        }
+
+        return super.onContextItemSelected(item)
     }
 }

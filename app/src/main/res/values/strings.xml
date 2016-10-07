@@ -13,6 +13,8 @@
     <string name="action_publish">Publish</string>
     <string name="action_logout">Logout</string>
 
+    <string name="action_remove_tweet">Remove Tweet</string>
+
     <string name="sort_oldest_first">Oldest First</string>
     <string name="sort_newest_first">Newest First</string>
     <string name="sort_curation_order">Manual</string>

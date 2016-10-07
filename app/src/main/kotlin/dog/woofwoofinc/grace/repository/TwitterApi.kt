@@ -78,6 +78,35 @@ object TwitterApi {
         return null
     }
 
+    fun removeTweetFromCollection(session: TwitterSession, collection: Timeline, tweetId: Long): Boolean? {
+        analytics.removeTweetFromCollection()
+
+        val url = "https://api.twitter.com/1.1/collections/entries/remove.json"
+
+        val params = mapOf<String, String>(
+            Pair("id", "custom-${collection.id}"),
+            Pair("tweet_id", "${tweetId}")
+        )
+
+        try {
+            val request = buildPostRequest(session.authToken, url, params)
+            val response = client.newCall(request).execute()
+
+            response.body().close()
+
+            if (response.isSuccessful) {
+                return true
+            }
+        } catch (ioe: IOException) {
+            Crashlytics.logException(ioe)
+        }
+
+        analytics.failedRemoveTweetFromCollection()
+        d("Failed to remove tweet from collection.")
+
+        return false
+    }
+
     fun setCollectionTimelineOrder(session: TwitterSession, collection: Timeline, order: TimelineOrder): Boolean {
         analytics.setCollectionTimelineOrder()
 

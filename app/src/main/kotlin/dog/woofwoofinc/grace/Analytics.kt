@@ -90,7 +90,7 @@ class Analytics(private val answers: Answers) {
         )
     }
 
-    fun  setCollectionTimelineOrder() {
+    fun setCollectionTimelineOrder() {
         answers.logCustom(
             CustomEvent("setcollectiontimelineorder")
         )

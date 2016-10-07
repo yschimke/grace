@@ -11,24 +11,16 @@ Twitter Collection app for Android.
 
 Credentials
 -----------
-The [Fabric] integrations require a `app/fabric.properties` file containing secrets which has not
-been included in this repository. Use the [Fabric plugin] to onboard or copy/paste your own keys
-into this file.
-
-[Fabric]: https://fabric.io
-[Fabric plugin]: https://get.fabric.io/android
-
-It should have the following format:
-
-    apiSecret=<64 character hex string>
-    twitterPluginId=<14 character hex string>
-
-The Login with Twitter and Twitter API functionality requires a Twitter Application consumer key
-and secret to be provided in `app/src/main/assets/app.properties`. This is a Java properties file
-and should have the following format.
+The Login with Twitter and Twitter API functionality requires a Twitter
+Application consumer key and secret to be provided in
+`app/src/main/assets/app.properties`. This is a Java properties file and should
+have the following format.
 
     twitter_key=<24 character base 64 string>
     twitter_secret=<50 character base 64 string>
+
+The `twitter_key` is labelled Consumer Key (API Key) in the Fabric display. The
+`twitter_secret` is labelled Consumer Secret (API Secret).
 
 
 License

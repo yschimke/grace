@@ -1,17 +1,19 @@
-# Add project specific ProGuard rules here.
-# By default, the flags in this file are appended to flags specified
-# in /Users/docrualaoich/Library/Android/sdk/tools/proguard/proguard-android.txt
-# You can edit the include path and order by changing the proguardFiles
-# directive in build.gradle.
 #
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# Jackson references
+#
+# - Warning: com.fasterxml.jackson.databind.ext.DOMSerializer: can't find referenced class org.w3c.dom.bootstrap.DOMImplementationRegistry
+-dontwarn org.w3c.dom.bootstrap.DOMImplementationRegistry
 
-# Add any project specific keep options here:
+# - Warning: com.fasterxml.jackson.databind.ext.Java7SupportImpl: can't find referenced class java.beans.Transient
+# - Warning: com.fasterxml.jackson.databind.ext.Java7SupportImpl: can't find referenced class java.beans.ConstructorProperties
+# => Safe to ignore (http://stackoverflow.com/questions/39425594/jackson-unable-to-load-jdk7-types-on-android)
+-dontwarn java.beans.Transient
+-dontwarn java.beans.ConstructorProperties
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+
+#
+# Rx references
+#
+# - Warning: rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef: can't find referenced class sun.misc.Unsafe
+# => Safe to ignore (https://github.com/ReactiveX/RxJava/issues/1415)
+-dontwarn sun.misc.Unsafe

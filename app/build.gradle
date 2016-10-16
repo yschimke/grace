@@ -37,8 +37,26 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            debuggable true
+            useProguard false
             minifyEnabled false
+            shrinkResources false
+        }
+
+        beta {
+            initWith(buildTypes.debug)
+            applicationIdSuffix ".beta"
+            versionNameSuffix "-beta"
+        }
+
+        release {
+            debuggable false
+            useProguard true
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

@@ -4,8 +4,6 @@ Contributors include:
 
 - `Daithi O Crualaoich <https://github.com/daithiocrualaoich>`_
 
-Grace logo courtesy of Brendan Kearns.
-
 The `Sphinx Bootstrap Theme`_ used in generating Cargo Sphinx documentation is
 by `Ryan Roemer`_. The documentation uses the Simplex theme from Bootswatch_.
 
